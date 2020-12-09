@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<title>W3.CSS Template</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<style>
+body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
+.w3-bar,h1,button {font-family: "Montserrat", sans-serif}
+.fa-anchor,.fa-coffee {font-size:200px}
+.menu-unselect {float:left;width:auto;border:none;display:block;outline:0;white-space:normal;padding:12px 24px;text-decoration:none}
+.menu-unselect:hover{color:#000!important;background-color:#fff!important}
+.menu-selected {float:left;width:auto;border:none;display:block;outline:0;white-space:normal;padding:12px 24px;text-decoration:none;color:#000!important;background-color:#fff!important}
+</style>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+<script>
+  function SubmitDVPN() {
+    submission = JSON.stringify({
+       "eth-address": document.getElementById("eth-address").value,
+       "data-plan": document.getElementById("data-plan").value,
+       "bandwidth-limit": document.getElementById("bandwidth-limit").value,
+       "auto-bandwidth": document.getElementById("auto-bandwidth").checked,
+       "price-setting": document.getElementById("price-setting").value,
+       "auto-price": document.getElementById("auto-price").checked,
+    });
+    var cf = confirm("Click OK to confirm submitting the setting " + submission);
+    if (!cf) {
+      return;
+    }
+    $.ajax({
+        type: "POST",
+        url: document.URL,
+        contentType: "application/json",
+        dataType: "text",
+        data: submission,
+        success: function() {alert("Submitted!");},
+        error: function(){ alert('Operation Failed!');},
+    });
+  };
+
+  function UpdateStatus() {
+    $.ajax({
+      type : "GET",
+      url : document.URL,
+      data: {"action": "status"},
+      dataType: "json",
+      success: function(data) {
+        for (var key in data) {
+          try {
+            if (key.includes("auto-") || key.includes("block-")) {
+              document.getElementById(key).checked = data[key];
+            }
+            else if (key == "used-data") {
+              var used = "Used: ";
+              if (data[key] > 1000000000000)
+                used += (data[key]/1000000000000).toFixed(2) + " TB";
+              else if (data[key] > 1000000000)
+                used += (data[key]/1000000000).toFixed(2) + " GB";
+              else if (data[key] > 1000000)
+                used += (data[key]/1000000).toFixed(2) + " MB";
+              else if (data[key] > 1000)
+                used += (data[key]/1000).toFixed(2) + " KB";
+              else
+                used += (data[key]).toFixed(2) + " B";
+              document.getElementById(key).innerHTML = used;
+            }
+            else {
+              document.getElementById(key).value = data[key];
+            }
+          }
+          catch (err) {
+            alert(err);
+          }
+        }
+      }
+    });
+  };
+
+  function Action(action) {
+    if (action != "running-status") {
+      var cf = confirm("Click OK to confirm " + action +  "ing this VPN");
+      if (!cf) {
+        return;
+      }
+      document.getElementById("running-status").textContent = action + "ing...";
+      document.getElementById("running-status").style = "color: orange";
+    }
+    var status = $.ajax({
+      type : "GET",
+      url : document.URL,
+      data: {"action": action},
+      dataType: "text",
+      success: function(data) {
+        try {
+          document.getElementById("running-status").textContent = data;
+          var runningStyle = "color: green"
+          if (data == "Running") {
+            runningStyle = "color: green"
+          } else if (data.includes("...")) {
+            runningStyle = "color: orange"
+          } else {
+            runningStyle = "color: red"
+          }
+          document.getElementById("running-status").style = runningStyle;
+        }
+        catch (err) {
+          alert(err);
+        }
+      }
+    });
+  }
+
+  function MenuSelect() {
+    var menus = document.URL.split("/");
+    var current_menu = "a-" + menus[menus.length - 1];
+    document.getElementById(current_menu).className = "menu-selected";
+  }
+</script>
+
+<body onload="MenuSelect();UpdateStatus();Action('running-status')">
+
+<!-- Navbar -->
+<div class="w3-top">
+  <div class="w3-bar w3-grey w3-card w3-left-align w3-large">
+    <a class="w3-bar-item w3-button w3-hide-medium w3-hide-large w3-right w3-padding-large w3-hover-white w3-large w3-grey" href="javascript:void(0);" onclick="myFunction()" title="Toggle Navigation Menu"><i class="fa fa-bars"></i></a>
+    <a href="index" class="menu-unselect" id="a-index">Overall</a>
+    <!-- <a href="password" class="menu-unselect" id="a-password">Password Reset</a> -->
+    <a href="mysterium" class="menu-unselect" id="a-mysterium">Mysterium</a>
+    <a href="sentinel" class="menu-unselect" id="a-sentinel">Sentinel</a>
+    <a href="tachyon" class="menu-unselect" id="a-tachyon">Tachyon</a>
+    <!-- <a href="tachyon" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Tachyon</a> -->
+  </div>
+</div>
+
+<!-- Header -->
+<!-- <header class="w3-container w3-grey w3-center" style="padding:128px 16px">
+  <h1 class="w3-margin w3-jumbo">START PAGE</h1>
+  <p class="w3-xlarge">Template by w3.css</p>
+  <button class="w3-button w3-black w3-padding-large w3-large w3-margin-top">Get Started</button>
+</header> -->
+
+<!-- First Grid -->
+<div class="w3-row-padding w3-padding-64 w3-container">
+  <div class="w3-content">
+    <div class="w3-col w3-padding"><p style="visibility:hidden">padding</p></div>
+
+    <div class="w3-center">
+      <p class="w3-large"><span>Running Status: </span> <span style="color: green" id="running-status"></span> </p> 
+      <button onclick="Action('start')">Start</button>
+      <button onclick="Action('terminate')">Terminate</button>
+      <button onclick="Action('restart')">Restart</button>
+    </div>
+
+    <div class="w3-center w3-row w3-section" style="padding-top: 8px">
+      <div class="w3-col s3 w3-center w3-white"><p style="visibility:hidden">padding</p></div>
+      <div class="w3-col s2" style="padding-top: 8px">ETH Address: </div>
+      <div class="w3-col s4">
+        <input class="w3-input" type="text" placeholder="0xfff..." id="eth-address">
+      </div>  
+    </div>
+
+    <div class="w3-center w3-row w3-section" style="padding-top: 8px">
+      <div class="w3-col s3 w3-center w3-white"><p style="visibility:hidden">padding</p></div>
+      <div class="w3-col s2" style="padding-top: 8px">Data Plan: </div>
+      <div class="w3-col s1">
+        <input class="w3-input" type="number" placeholder="0" id="data-plan">
+      </div>  
+      <div class="w3-col s1" style="padding-left: 8px; text-align: left">GB / Month</div>
+      <div class="w3-col s2" style="padding-top: 8px; padding-left: 24px; text-align: left" id="used-data">Used: 0 B</div>
+    </div>
+
+    <div class="w3-center w3-row w3-section" style="padding-top: 8px">
+      <div class="w3-col s3 w3-center w3-white"><p style="visibility:hidden">padding</p></div>
+      <div class="w3-col s2" style="padding-top: 8px">Bandwidth Limit: </div>
+      <div class="w3-col s1">
+        <input class="w3-input" type="number" placeholder="0" id="bandwidth-limit">
+      </div>  
+      <div class="w3-col s1" style="padding-top: 8px; padding-left: 8px; text-align: left">Mbps</div>
+      <div class="w3-col s2 w3-left">
+        <input class="w3-check" type="checkbox" checked="checked" id="auto-bandwidth">
+        <label>Auto Control</label>
+      </div>
+    </div>
+
+    <div class="w3-center w3-row w3-section" style="padding-top: 8px">
+      <div class="w3-col s3 w3-center w3-white"><p style="visibility:hidden">padding</p></div>
+      <div class="w3-col s2" style="padding-top: 8px">Price Setting: </div>
+      <div class="w3-col s1">
+        <input class="w3-input" type="number" step="0.01" placeholder="0" id="price-setting">
+      </div>  
+      <div class="w3-col s1" style="padding-top: 8px; padding-left: 8px; text-align: left">Myst / GB</div>
+      <div class="w3-col s2 w3-left">
+        <input class="w3-check" type="checkbox" checked="checked" id="auto-price">
+        <label>Auto Control</label>
+      </div>
+    </div>
+
+    <div class="w3-center" style="padding-top: 16px">
+      <button id="submit-dvpn" onclick="SubmitDVPN()">Submit</button>
+    </div>
+
+    <!-- <div class="w3-third w3-center">
+      <i class="fa fa-anchor w3-padding-64 w3-text-grey"></i>
+    </div> -->
+  </div>
+</div>
+
+
+<script>
+// Used to toggle the menu on small screens when clicking on the menu button
+function myFunction() {
+  var x = document.getElementById("navDemo");
+  if (x.className.indexOf("w3-show") == -1) {
+    x.className += " w3-show";
+  } else { 
+    x.className = x.className.replace(" w3-show", "");
+  }
+}
+</script>
+
+</body>
+</html>

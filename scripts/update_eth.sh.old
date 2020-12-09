@@ -1,0 +1,15 @@
+#!/bin/bash -x
+
+eth_addr=`cat ../conf/eth_addr.txt`
+
+ip_myst=`cat ../conf/internal_myst.conf | cut -d'/' -f1`
+port_ctrl_myst=4449
+curl "http://${ip_myst}:${port_ctrl_myst}/tequilapi/identities/${node_id}" \
+ -X 'PUT' \
+ -H 'Accept: application/json, text/plain, */*' -H 'Content-Type: application/json;charset=UTF-8' \
+ -H "Origin: http://${ip_myst}:${port_ctrl_myst}" \
+ -H "Referer: http://${ip_myst}:${port_ctrl_myst}/" \
+ -b tmp/cookie_myst.txt \
+ --data-binary "{\"eth_address\":\"${eth_addr}\"}"
+
+python3 update_config.py ${eth_addr}

@@ -1,0 +1,7 @@
+create Malicious-Downloads hash:net family inet hashsize 1024 maxelem 65536
+add Malicious-Downloads 81.171.8.143
+add Malicious-Downloads 192.243.59.20
+add Malicious-Downloads 139.45.195.97
+add Malicious-Downloads 88.208.59.102
+add Malicious-Downloads 108.168.193.184
+add Malicious-Downloads 88.208.59.103
