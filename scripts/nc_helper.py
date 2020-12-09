@@ -240,6 +240,7 @@ class DVPN():
         todayDate = datetime.date.today()
         month_start = time.mktime(todayDate.replace(day=1).timetuple())
         last_used = 0
+        last_netlog_time = 0
         with open(os.path.join(self.netlogger), "r+") as fp:
             for line in fp:
                 try:
