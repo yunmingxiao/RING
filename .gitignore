@@ -1,0 +1,12 @@
+output/
+conf/eth_addr.txt
+conf/internal_myst.conf
+conf/internal_sentinel.conf
+conf/internal_lethean.conf
+result_processing/tmp/
+notes/servers.txt
+scripts/tmp/
+resources/
+*dir/
+*.pyc
+__pycache__
