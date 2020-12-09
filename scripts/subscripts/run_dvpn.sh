@@ -21,7 +21,6 @@ if [ $1 = 'mysterium' ]; then
     --name mysterium \
     -v ${DIR_MYST}:/var/lib/mysterium-node \
     xiaoyunming/myst:${arch} \
-    --experiment-natpunching=false \
     service --agreed-terms-and-conditions \
     --openvpn.port=${port_ovpn_myst}
 
