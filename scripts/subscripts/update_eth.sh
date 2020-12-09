@@ -12,8 +12,7 @@ if [ $1 = 'mysterium' ]; then
     DIR_MYST="$HOME/mysterium-node"
     port_ovpn_myst=25000
     port_ctrl_myst=4449
-    pw_myst='yunming'
-
+    
     echo 'Update Mysterium Address'
     echo "${eth_addr}" > config/eth_mysterium.conf
     ip_myst=`cat ../conf/internal_myst.conf | cut -d'/' -f1`

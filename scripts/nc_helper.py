@@ -618,7 +618,7 @@ class Controller():
             'mysterium': {
                 "eth-address": "0x6715A816b9ea448767655bbf0D62BABd4EAaCd20", 
                 "data-plan": 200,
-                "bandwidth-limit": 100,
+                "bandwidth-limit": 5,
                 "auto-bandwidth": False,
                 "price-setting": 0.01,
                 "auto-price": False,
@@ -626,7 +626,7 @@ class Controller():
             'sentinel': {
                 "eth-address": "0x6715A816b9ea448767655bbf0D62BABd4EAaCd20", 
                 "data-plan": 200,
-                "bandwidth-limit": 100,
+                "bandwidth-limit": 5,
                 "auto-bandwidth": False,
                 "price-setting": 0.01,
                 "auto-price": False,
@@ -634,7 +634,7 @@ class Controller():
             'tachyon': {
                 "eth-address": "0x6715A816b9ea448767655bbf0D62BABd4EAaCd20", 
                 "data-plan": 200,
-                "bandwidth-limit": 100,
+                "bandwidth-limit": 5,
                 "auto-bandwidth": False,
                 "price-setting": 0.01,
                 "auto-price": False,

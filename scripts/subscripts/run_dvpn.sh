@@ -11,7 +11,6 @@ if [ $1 = 'mysterium' ]; then
     DIR_MYST="$HOME/mysterium-node"
     port_ovpn_myst=25000
     port_ctrl_myst=4449
-    pw_myst='yunming'
     eth_addr_myst=`cat config/eth_mysterium.conf`
 
     echo 'Run Mysterium'
@@ -24,8 +23,7 @@ if [ $1 = 'mysterium' ]; then
     xiaoyunming/myst:${arch} \
     --experiment-natpunching=false \
     service --agreed-terms-and-conditions \
-    --openvpn.port=${port_ovpn_myst} \
-    --identity.passphrase=${pw_myst}
+    --openvpn.port=${port_ovpn_myst}
 
     sleep 5 # waiting for myst to set up
 
@@ -34,7 +32,7 @@ if [ $1 = 'mysterium' ]; then
 
     curl "http://${ip_myst}:4449/tequilapi/auth/login" \
     -H 'Accept: application/json, text/plain, */*' -H 'Content-Type: application/json;charset=UTF-8' \
-    --data-binary '{"username":"myst","password":"yunming"}' \
+    --data-binary '{"username":"myst","password":"mystberry"}' \
     -c tmp/cookie_myst.txt
 
 elif [ $1 == 'sentinel' ]; then
