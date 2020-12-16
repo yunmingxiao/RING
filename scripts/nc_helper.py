@@ -8,6 +8,7 @@ import re
 import json
 import time
 import datetime
+import requests
 # import sched
 from threading import Timer
 
@@ -48,7 +49,7 @@ class Ifconfig():
                     "bytes": int(self.interfaces[i]['receive-bytes']) + int(self.interfaces[i]['transmit-bytes']),
                 }
         self.history.append(res)
-        if len(self.history) > 11:
+        if len(self.history) > 61:
             self.history.pop(0)
 
     def update_configs(self, update=True):
@@ -296,8 +297,8 @@ class DVPN():
             self.price_setting = configs['price-setting']
             update = True
         if force or (self.auto_price != configs['auto-price']):
-            self.update_auto_price(configs['auto-price'])
             self.auto_price = configs['auto-price']
+            self.update_auto_price()
             update = True
         return update
         
@@ -344,8 +345,15 @@ class DVPN():
         os.chdir(wd)    
         self.price_setting = price_setting
 
-    def update_auto_price(self, auto_price):
-        pass
+    def update_auto_price(self):
+        if self.auto_price:
+            try: 
+                req = requests.get('http://165.124.180.66:45678/prices/%s' % (self.name))
+                prs = json.loads(req)
+                # self.update_price_setting(prs)
+                # self.price_setting = prs
+            except Exception as e:
+                print('DVPN.update_auto_price error', e, req)
 
 
 class IPTableManager():

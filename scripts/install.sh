@@ -40,8 +40,8 @@ if [ $? -eq 1 ]
 then
 	sudo apt-get install -y ipset
 fi
-sudo apt-get install xtables-addons-common fail2ban -y
-sudo pip3 install --upgrade python-iptables Django tcconfig bidict cherrypy gglsbl adblockparser IPy intervaltree bs4
+sudo apt-get install xtables-addons-common fail2ban miniupnpc -y
+sudo pip3 install --upgrade requests python-iptables Django tcconfig bidict cherrypy gglsbl adblockparser IPy intervaltree bs4
 
 # network command privilege
 TC_BIN_PATH=`which tc`
@@ -52,6 +52,18 @@ sudo setcap cap_net_admin+ep ${TC_BIN_PATH}
 sudo setcap cap_net_raw,cap_net_admin+ep ${IP_BIN_PATH}
 sudo setcap cap_net_raw,cap_net_admin+ep ${IPSET_BIN_PATH}
 sudo setcap cap_net_raw,cap_net_admin+ep ${IPTABLES_BIN_PATH}
+
+# Try to set up UPnP
+ip=`ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1' | grep -v '172.*.*.*'`
+for port in 3000 80 443 9080 29444
+do
+upnpc -a ${ip} ${port} ${port} TCP
+done
+for port in 1194 25000
+do
+upnpc -a ${ip} ${port} ${port} UDP
+done
+
 
 # install java
 sudo apt-get update
