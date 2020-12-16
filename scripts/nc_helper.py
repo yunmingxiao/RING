@@ -625,7 +625,7 @@ class Controller():
         }
         self.dvpn_config = {
             'mysterium': {
-                "eth-address": "0x6715A816b9ea448767655bbf0D62BABd4EAaCd20", 
+                "eth-address": "0xFb6be8eAb6899C6Ec2bb859cae96094867Dbc733", 
                 "data-plan": 200,
                 "bandwidth-limit": 5,
                 "auto-bandwidth": False,
@@ -633,7 +633,7 @@ class Controller():
                 "auto-price": False,
             },
             'sentinel': {
-                "eth-address": "0x6715A816b9ea448767655bbf0D62BABd4EAaCd20", 
+                "eth-address": "0xFb6be8eAb6899C6Ec2bb859cae96094867Dbc733", 
                 "data-plan": 200,
                 "bandwidth-limit": 5,
                 "auto-bandwidth": False,
@@ -641,7 +641,7 @@ class Controller():
                 "auto-price": False,
             },
             'tachyon': {
-                "eth-address": "0x6715A816b9ea448767655bbf0D62BABd4EAaCd20", 
+                "eth-address": "0xFb6be8eAb6899C6Ec2bb859cae96094867Dbc733", 
                 "data-plan": 200,
                 "bandwidth-limit": 5,
                 "auto-bandwidth": False,
