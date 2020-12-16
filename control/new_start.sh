@@ -8,6 +8,7 @@ source control/git_update.sh >> control/github.log 2>&1 &
 cd scripts
 source install.sh
 source create_net.sh
+source stop_record.sh
 source record.sh
 
 cd ringweb
