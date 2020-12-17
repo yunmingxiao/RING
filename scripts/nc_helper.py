@@ -527,6 +527,7 @@ class Controller():
             for dvpn in self.dvpns:
                 self.dvpns[dvpn].update_used()
                 self.dvpns[dvpn].update_auto_bandwidth()
+                self.dvpns[dvpn].update_auto_price()
 
         t = Timer(t, self.log_netstat, (w-1, t,))
         t.start()
