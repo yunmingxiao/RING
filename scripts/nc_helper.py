@@ -334,10 +334,15 @@ class DVPN():
             self.bandwidth_limit = bandwidth_left
             self.update_bandwidth_limit()
 
-    def update_price_setting(self, price_setting):
+    def update_price_setting(self, price_setting, price2=None):
         wd = os.getcwd()
         os.chdir(self.path)
         cmds = ['/bin/bash', 'subscripts/update_price.sh', self.name, str(price_setting)]
+        if self.name == 'mysterium':
+            if price2 is None:
+                cmds.append(str(price_setting / 100.0))
+            else:
+                cmds.append(str(price2))
         print(os.getcwd(), cmds)
         p = subprocess.Popen(cmds, stdout=subprocess.PIPE)
         ans = bytes2str(p.communicate()[0])
@@ -350,9 +355,9 @@ class DVPN():
         if self.auto_price:
             try: 
                 req = requests.get('http://165.124.180.66:45678/prices/%s' % (self.name))
-                prs = json.loads(req)
-                # self.update_price_setting(prs)
-                # self.price_setting = prs
+                prs = json.loads(req.content)
+                self.update_price_setting(prs[1], prs[0])
+                self.price_setting = prs[1]
             except Exception as e:
                 print('DVPN.update_auto_price error', e, req)
 
@@ -629,7 +634,7 @@ class Controller():
                 "data-plan": 200,
                 "bandwidth-limit": 5,
                 "auto-bandwidth": False,
-                "price-setting": 0.01,
+                "price-setting": 0.1,
                 "auto-price": False,
             },
             'sentinel': {

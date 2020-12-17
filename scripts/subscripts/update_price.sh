@@ -12,17 +12,23 @@ if [ $1 = 'mysterium' ]; then
     DIR_MYST="$HOME/mysterium-node"
     port_ovpn_myst=25000
     port_ctrl_myst=4449
+    price_per_min=${3}
 
     echo 'Update Mysterium Address'
     ip_myst=`cat ../conf/internal_myst.conf | cut -d'/' -f1`
     node_id=`sudo ls ${DIR_MYST}/keystore/ | grep UTC | cut -d'-' -f9`
+
+    curl "http://${ip_myst}:4449/tequilapi/auth/login" \
+    -H 'Accept: application/json, text/plain, */*' -H 'Content-Type: application/json;charset=UTF-8' \
+    --data-binary '{"username":"myst","password":"mystberry"}' \
+    -c tmp/cookie_myst.txt
 
     curl "http://${ip_myst}:4449/tequilapi/config/user" \
     -H 'Accept: application/json, text/plain, */*' -H 'Content-Type: application/json;charset=UTF-8' \
     -H "Origin: http://${ip_myst}:4449" \
     -H "Referer: http://${ip_myst}:4449/" \
     -b tmp/cookie_myst.txt \
-    --data-binary "{\"data\":{\"openvpn\":{\"port\":25000,\"price-gb\":${price},\"price-minute\":null},\"payment\":{},\"shaper\":{\"enabled\":false},\"wireguard\":{\"price-gb\":null,\"price-minute\":null},\"access-policy\":null}}"
+    --data-binary "{\"data\":{\"payment\":{\"price-gb\":${price},\"price-minute\":${price_per_min}},\"shaper\":{\"enabled\":false},\"openvpn\":{\"port\":25000,\"price-gb\":null,\"price-minute\":null},\"wireguard\":{\"price-gb\":null,\"price-minute\":null},\"access-policy\":null}}"
 
 
 elif [ $1 == 'sentinel' ]; then

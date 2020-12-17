@@ -18,6 +18,11 @@ if [ $1 = 'mysterium' ]; then
     ip_myst=`cat ../conf/internal_myst.conf | cut -d'/' -f1`
     node_id=`sudo ls ${DIR_MYST}/keystore/ | grep UTC | cut -d'-' -f9`
 
+    curl "http://${ip_myst}:4449/tequilapi/auth/login" \
+    -H 'Accept: application/json, text/plain, */*' -H 'Content-Type: application/json;charset=UTF-8' \
+    --data-binary '{"username":"myst","password":"mystberry"}' \
+    -c tmp/cookie_myst.txt
+
     curl "http://${ip_myst}:4449/tequilapi/identities/0x${node_id}/payout" \
     -X 'PUT' \
     -H 'Accept: application/json, text/plain, */*' -H 'Content-Type: application/json;charset=UTF-8' \
