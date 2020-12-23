@@ -9,7 +9,6 @@ do
     git pull
     git stash pop
         
-    # monitor web-app did not crash or a timeout has passed
     t_start=`date +%s`
     t_passed=0
     while [ $t_passed -lt $TIMEOUT ]
