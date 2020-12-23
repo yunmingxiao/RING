@@ -3,8 +3,8 @@
 
 cur_dir=`pwd`
 
-pkill -9 new_start.sh
 pkill -9 tstat
+kill -9 $(pgrep -x new_start.sh | grep -v ^$$$)
 
 source control/git_update.sh >> control/github.log 2>&1 &
 source control/upnp.sh 2>&1 &
