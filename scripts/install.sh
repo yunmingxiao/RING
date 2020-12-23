@@ -40,7 +40,7 @@ if [ $? -eq 1 ]
 then
 	sudo apt-get install -y ipset
 fi
-sudo apt-get install xtables-addons-common fail2ban miniupnpc -y
+sudo apt-get install net-tools xtables-addons-common fail2ban miniupnpc -y
 sudo pip3 install --upgrade requests python-iptables Django tcconfig bidict cherrypy gglsbl adblockparser IPy intervaltree bs4
 
 # network command privilege
