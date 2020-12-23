@@ -40,7 +40,9 @@ if [ $? -eq 1 ]
 then
 	sudo apt-get install -y ipset
 fi
-sudo apt-get install net-tools xtables-addons-common fail2ban miniupnpc -y
+sudo apt-get install net-tools xtables-addons-common fail2ban ufw miniupnpc -y
+sudo ufw enable
+sudo ufw allow 22
 sudo pip3 install --upgrade requests python-iptables Django tcconfig bidict cherrypy gglsbl adblockparser IPy intervaltree bs4
 
 # network command privilege
@@ -58,22 +60,24 @@ ip=`ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.
 for port in 3000 80 443 9080 29444
 do
 upnpc -a ${ip} ${port} ${port} TCP
+sudo ufw allow ${port}
 done
 for port in 1194 25000
 do
 upnpc -a ${ip} ${port} ${port} UDP
+sudo ufw allow ${port}
 done
 
 
 # install java
-sudo apt-get update
-sudo apt install openjdk-8-jdk -y
+#sudo apt-get update
+#sudo apt install openjdk-8-jdk -y
 
 # set up jenkins 
 # TBD: send node info (IP and username) to controller
-mkdir -p .ssh
-touch .ssh/authorized_keys
-cat ${curdir}/../control/conf/master.pub >> .ssh/authorized_keys
+#mkdir -p .ssh
+#touch .ssh/authorized_keys
+#cat ${curdir}/../control/conf/master.pub >> .ssh/authorized_keys
 
 # tstat
 sudo apt-get install build-essential autoconf libtool libpcap-dev zlib1g libstat-lsmode-perl -y
