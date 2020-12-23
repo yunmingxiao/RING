@@ -111,6 +111,7 @@ END
 else 
 newgrp docker
 fi
+fi
 
 # pull the images
 arch=`uname -m`
