@@ -5,6 +5,7 @@ TIMEOUT=1200   # test regularly
 
 while true 
 do 
+    ip=`ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1' | grep -v '172.*.*.*'`
     for port in 3000 80 443 9080 29444
     do
         upnpc -l | grep ":${port}" || upnpc -a ${ip} ${port} ${port} TCP
