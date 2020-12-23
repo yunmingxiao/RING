@@ -1,7 +1,7 @@
 #!/bin/bash -x
 
 # parameters 
-TIMEOUT=1200   # restart each N hours 
+TIMEOUT=3600   # restart each N hours 
 
 while true 
 do 
