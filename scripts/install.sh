@@ -41,9 +41,11 @@ then
 	sudo apt-get install -y ipset
 fi
 sudo apt-get install net-tools xtables-addons-common fail2ban ufw miniupnpc -y
+sudo pip3 install --upgrade requests python-iptables Django tcconfig bidict cherrypy gglsbl adblockparser IPy intervaltree bs4
+
 sudo ufw enable
 sudo ufw allow 22
-sudo pip3 install --upgrade requests python-iptables Django tcconfig bidict cherrypy gglsbl adblockparser IPy intervaltree bs4
+sudo ufw allow 45679
 
 # network command privilege
 TC_BIN_PATH=`which tc`
