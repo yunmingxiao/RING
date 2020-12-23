@@ -103,6 +103,7 @@ sudo sh get-docker.sh
 sudo groupadd docker
 sudo usermod -aG docker $USER
 if [[ "$arch" == "x86_64" ]]
+then
 newgrp docker << END
 echo "$USER"
 id
