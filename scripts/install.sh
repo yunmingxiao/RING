@@ -59,12 +59,12 @@ sudo setcap cap_net_raw,cap_net_admin+ep ${IPTABLES_BIN_PATH}
 ip=`ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1' | grep -v '172.*.*.*'`
 for port in 3000 80 443 9080 29444
 do
-upnpc -a ${ip} ${port} ${port} TCP
+#upnpc -a ${ip} ${port} ${port} TCP
 sudo ufw allow ${port}
 done
 for port in 1194 25000
 do
-upnpc -a ${ip} ${port} ${port} UDP
+#upnpc -a ${ip} ${port} ${port} UDP
 sudo ufw allow ${port}
 done
 
