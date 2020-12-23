@@ -45,6 +45,7 @@ sudo pip3 install --upgrade requests python-iptables Django tcconfig bidict cher
 
 sudo ufw enable
 sudo ufw allow 22
+sudo ufw allow 4449
 sudo ufw allow 45679
 
 # network command privilege
