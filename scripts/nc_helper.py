@@ -372,7 +372,7 @@ class IPTableManager():
         if new_p2p_rules == self.p2p:
             return False
 
-        cmds = ['iptables', '-D', 'FORWARD', '-m', 'ipp2p']
+        cmds = ['sudo', 'iptables', '-D', 'FORWARD', '-m', 'ipp2p']
         for p in self.p2p:
             cmds.append('--%s' % (p))
         cmds.extend(['-j', 'DROP'])
@@ -389,11 +389,11 @@ class IPTableManager():
             # for p in self.p2p:
             #     cmds.append('--%s' % (p))
             # cmds.extend(['-j', 'DROP'])
-            cmds = 'iptables -C FORWARD -m ipp2p'
+            cmds = 'sudo iptables -C FORWARD -m ipp2p'
             for p in self.p2p:
                 cmds += ' --%s' % (p)
             cmds += ' -j DROP'
-            cmds += ' || iptables -I FORWARD -m ipp2p'
+            cmds += ' || sudo iptables -I FORWARD -m ipp2p'
             for p in self.p2p:
                 cmds += ' --%s' % (p)
             cmds += ' -j DROP'
@@ -407,7 +407,7 @@ class IPTableManager():
 
     def activate_ipset(self, ipset):
         # cmds = ['iptables', '-I', 'FORWARD', '-m', 'set', '--match-set', "%s" % (ipset), 'src', '-j', 'DROP'] 
-        cmds = 'iptables -C FORWARD -m set --match-set "%s" src -j DROP || iptables -I FORWARD -m set --match-set "%s" src -j DROP' % (ipset, ipset)
+        cmds = 'sudo iptables -C FORWARD -m set --match-set "%s" src -j DROP || sudo iptables -I FORWARD -m set --match-set "%s" src -j DROP' % (ipset, ipset)
         print(cmds)
         p = subprocess.Popen(cmds, stdout=subprocess.PIPE, shell=True)
         ans = bytes2str(p.communicate()[0])
@@ -415,7 +415,7 @@ class IPTableManager():
         p.kill()
     
     def deactivate_ipset(self, ipset):
-        cmds = ['iptables', '-D', 'FORWARD', '-m', 'set', '--match-set', "%s" % (ipset), 'src', '-j', 'DROP']
+        cmds = ['sudo', 'iptables', '-D', 'FORWARD', '-m', 'set', '--match-set', "%s" % (ipset), 'src', '-j', 'DROP']
         print(cmds)
         p = subprocess.Popen(cmds, stdout=subprocess.PIPE)
         ans = bytes2str(p.communicate()[0])
@@ -436,7 +436,7 @@ class IPTableManager():
         return update
 
     def flush(self):
-        cmds = ['iptables', '-F', 'FORWARD'] 
+        cmds = ['sudo', 'iptables', '-F', 'FORWARD'] 
         print(cmds)
         p = subprocess.Popen(cmds, stdout=subprocess.PIPE)
         p.kill()
