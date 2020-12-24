@@ -330,7 +330,7 @@ class DVPN():
                 nextMonthDate = nextMonthDate.replace(year=todayDate.year+1)
             next_month = time.mktime(nextMonthDate.timetuple())
             now = time.time()
-            bandwidth_left = 3 * (self.data_plan * 1000000000 - self.used) / (next_month - now) / 1000000.0
+            bandwidth_left = 8 * (self.data_plan * 1000000000 - self.used) / (next_month - now) / 1000000.0
             self.bandwidth_limit = bandwidth_left
             self.update_bandwidth_limit()
 
@@ -570,10 +570,10 @@ class Controller():
 
     def get_config(self, vpn):
         config = self.dvpns[vpn].generate_config()
-        current_net = self.netstat.get_configs(update=False)
-        current_used = float(current_net['net-'+vpn]["receive-bytes"]) + float(current_net['net-'+vpn]["transmit-bytes"])
-        print('Controller.get_config', current_used, config["used-data"])
-        config["used-data"] = current_used - config["used-data"]
+        # current_net = self.netstat.get_configs(update=False)
+        # current_used = float(current_net['net-'+vpn]["receive-bytes"]) + float(current_net['net-'+vpn]["transmit-bytes"])
+        # print('Controller.get_config', current_used, config["used-data"])
+        # config["used-data"] = current_used - config["used-data"]
         return config
 
     # # status
