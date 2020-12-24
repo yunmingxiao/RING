@@ -27,7 +27,11 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
        "price-setting": document.getElementById("price-setting").value,
        "auto-price": document.getElementById("auto-price").checked,
     });
-    var cf = confirm("Click OK to confirm submitting the setting " + submission);
+    var note = "Click OK to confirm submitting the settings";
+    if (document.URL.includes("sentinel")) {
+      note = note + "\n(The change for ETH address will only take effect after restart Sentinel)"
+    }
+    var cf = confirm(note);
     if (!cf) {
       return;
     }

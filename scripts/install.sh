@@ -84,7 +84,7 @@ done
 
 # tstat
 sudo apt-get install build-essential autoconf libtool libpcap-dev zlib1g libstat-lsmode-perl -y
-if [ ! -d "tstat" ]
+if [ ! -f "tstat/tstat/tstat" ]
 then
     wget http://tstat.polito.it/download/tstat-latest.tar.gz
     tar -xvf tstat-latest.tar.gz && mv tstat-?.?.? tstat && cd tstat

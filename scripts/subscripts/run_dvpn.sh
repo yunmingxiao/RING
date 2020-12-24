@@ -34,6 +34,24 @@ if [ $1 = 'mysterium' ]; then
     --data-binary '{"username":"myst","password":"mystberry"}' \
     -c tmp/cookie_myst.txt
 
+    eth_addr=`cat config/eth_mysterium.conf`
+    curl "http://${ip_myst}:4449/tequilapi/identities/0x${node_id}/payout" \
+    -X 'PUT' \
+    -H 'Accept: application/json, text/plain, */*' -H 'Content-Type: application/json;charset=UTF-8' \
+    -H "Origin: http://${ip_myst}:4449" \
+    -H "Referer: http://${ip_myst}:4449/" \
+    -b tmp/cookie_myst.txt \
+    --data-binary "{\"eth_address\":\"${eth_addr}\"}"
+    
+    price=`cat scripts/config/last.conf | python3 -c "import sys, json; print(json.load(sys.stdin)['dvpns']['mysterium']['price-setting'])"`
+    price_per_min=`cat scripts/config/last.conf | python3 -c "import sys, json; print(json.load(sys.stdin)['dvpns']['mysterium']['price-setting']/100.0)"`
+    curl "http://${ip_myst}:4449/tequilapi/config/user" \
+    -H 'Accept: application/json, text/plain, */*' -H 'Content-Type: application/json;charset=UTF-8' \
+    -H "Origin: http://${ip_myst}:4449" \
+    -H "Referer: http://${ip_myst}:4449/" \
+    -b tmp/cookie_myst.txt \
+    --data-binary "{\"data\":{\"payment\":{\"price-gb\":${price},\"price-minute\":${price_per_min}},\"shaper\":{\"enabled\":false},\"openvpn\":{\"port\":25000,\"price-gb\":null,\"price-minute\":null},\"wireguard\":{\"price-gb\":null,\"price-minute\":null},\"access-policy\":null}}"
+
 elif [ $1 == 'sentinel' ]; then
     DIR_SENT="$HOME/sentinel"
     port_ovpn_sent=1194
