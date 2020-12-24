@@ -43,8 +43,8 @@ if [ $1 = 'mysterium' ]; then
     -b tmp/cookie_myst.txt \
     --data-binary "{\"eth_address\":\"${eth_addr}\"}"
     
-    price=`cat scripts/config/last.conf | python3 -c "import sys, json; print(json.load(sys.stdin)['dvpns']['mysterium']['price-setting'])"`
-    price_per_min=`cat scripts/config/last.conf | python3 -c "import sys, json; print(json.load(sys.stdin)['dvpns']['mysterium']['price-setting']/1000.0)"`
+    price=`cat config/last.conf | python3 -c "import sys, json; print(json.load(sys.stdin)['dvpns']['mysterium']['price-setting'])"`
+    price_per_min=`cat config/last.conf | python3 -c "import sys, json; print(json.load(sys.stdin)['dvpns']['mysterium']['price-setting']/1000.0)"`
     curl "http://${ip_myst}:4449/tequilapi/config/user" \
     -H 'Accept: application/json, text/plain, */*' -H 'Content-Type: application/json;charset=UTF-8' \
     -H "Origin: http://${ip_myst}:4449" \
