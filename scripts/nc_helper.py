@@ -340,7 +340,7 @@ class DVPN():
         cmds = ['/bin/bash', 'subscripts/update_price.sh', self.name, str(price_setting)]
         if self.name == 'mysterium':
             if price2 is None:
-                cmds.append(str(price_setting / 100.0))
+                cmds.append(str(price_setting / 1000.0))
             else:
                 cmds.append(str(price2))
         print(os.getcwd(), cmds)
