@@ -52,6 +52,36 @@ if [ $1 = 'mysterium' ]; then
     -b tmp/cookie_myst.txt \
     --data-binary "{\"data\":{\"payment\":{\"price-gb\":${price},\"price-minute\":${price_per_min}},\"shaper\":{\"enabled\":false},\"openvpn\":{\"port\":25000,\"price-gb\":null,\"price-minute\":null},\"wireguard\":{\"price-gb\":null,\"price-minute\":null},\"access-policy\":null}}"
 
+    service_id=`curl "http://${ip_myst}:4449/tequilapi/services" \
+    -H 'Accept: application/json, text/plain, */*' -H 'Content-Type: application/json;charset=UTF-8' \
+    -H "Origin: http://${ip_myst}:4449" \
+    -H "Referer: http://${ip_myst}:4449/" \
+    -b tmp/cookie_myst.txt \
+    | xargs -0 python3 subscripts/simple_py.py`
+
+    for sid in ${service_id}
+    do 
+        curl "http://${ip_myst}:4449/tequilapi/services/${sid}" \
+        -X DELETE \
+        -H 'Accept: application/json, text/plain, */*' -H 'Content-Type: application/json;charset=UTF-8' \
+        -H "Origin: http://${ip_myst}:4449" \
+        -H "Referer: http://${ip_myst}:4449/" \
+        -b tmp/cookie_myst.txt
+    done
+
+    sleep 1
+
+    for serv in 'openvpn' 'wireguard' 'noop'
+    do
+        curl "http://${ip_myst}:4449/tequilapi/services" \
+        -X POST \
+        -H 'Accept: application/json, text/plain, */*' -H 'Content-Type: application/json;charset=UTF-8' \
+        -H "Origin: http://${ip_myst}:4449" \
+        -H "Referer: http://${ip_myst}:4449/" \
+        -b tmp/cookie_myst.txt \
+        --data-binary "{\"provider_id\":\"0x${node_id}\", \"type\":\"${serv}\"}"
+    done
+
 elif [ $1 == 'sentinel' ]; then
     DIR_SENT="$HOME/sentinel"
     port_ovpn_sent=1194
