@@ -24,7 +24,7 @@ if [ $1 = 'mysterium' ]; then
     service --agreed-terms-and-conditions \
     --openvpn.port=${port_ovpn_myst}
 
-    sleep 5 # waiting for myst to set up
+    sleep 10 # waiting for myst to set up
 
     ip_myst=`cat ../conf/internal_myst.conf | cut -d'/' -f1`
     node_id=`sudo ls ${DIR_MYST}/keystore/ | grep UTC | cut -d'-' -f9`
@@ -51,6 +51,8 @@ if [ $1 = 'mysterium' ]; then
     -H "Referer: http://${ip_myst}:4449/" \
     -b tmp/cookie_myst.txt \
     --data-binary "{\"data\":{\"payment\":{\"price-gb\":${price},\"price-minute\":${price_per_min}},\"shaper\":{\"enabled\":false},\"openvpn\":{\"port\":25000,\"price-gb\":null,\"price-minute\":null},\"wireguard\":{\"price-gb\":null,\"price-minute\":null},\"access-policy\":null}}"
+
+    sleep 3
 
     service_id=`curl "http://${ip_myst}:4449/tequilapi/services" \
     -H 'Accept: application/json, text/plain, */*' -H 'Content-Type: application/json;charset=UTF-8' \
