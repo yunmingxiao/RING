@@ -6,6 +6,7 @@ conf/internal_lethean.conf
 result_processing/tmp/
 notes/servers.txt
 scripts/tmp/
+scripts/config/recent_history.log
 resources/
 *dir/
 *.pyc
