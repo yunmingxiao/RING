@@ -16,6 +16,10 @@ import iptc
 from helpers import controller2web
 from generate_ipset import IPSet
 
+
+SAVE_INTERVAL = 30
+
+
 def bytes2str(s):
     if type(s) is bytes:
         return s.decode('utf8')
@@ -25,10 +29,16 @@ def bytes2str(s):
 
 
 class Ifconfig():
-    def __init__(self, interfaces={}):
+    def __init__(self, interfaces={}, recent_his=''):
         self.interfaces = interfaces
         self.update_configs()
+        self.recent_his = recent_his
         self.history = []
+        try:
+            with open(self.recent_his, "r") as fp:
+                self.history = json.load(fp)
+        except Exception as e:
+            print('Ifconfig.__init__: load recent history failed', e)
         # {'net-myst': {'receive-bytes': 123, 'receive-errs': 123, 'receive-drop': 123, 'transmit-bytes': 123, ...}, ...}
         
     def __str__(self):
@@ -49,8 +59,13 @@ class Ifconfig():
                     "bytes": int(self.interfaces[i]['receive-bytes']) + int(self.interfaces[i]['transmit-bytes']),
                 }
         self.history.append(res)
-        if len(self.history) > 61:
-            self.history.pop(0)
+        if len(self.history) > 1440:
+            self.history = self.history[-1440:]
+        try:
+            with open(self.recent_his, "w") as fp:
+                json.dump(self.history, fp)
+        except Exception as e:
+            print('Ifconfig.add_history: save recent history failed', e)
 
     def update_configs(self, update=True):
         try:
@@ -80,6 +95,9 @@ class Ifconfig():
 
     def get_configs(self, update=True):
         self.update_configs(update)
+        return self.interfaces
+
+    def get_interfaces(self):
         return self.interfaces
 
     def get_history(self):
@@ -174,7 +192,7 @@ class TrafficControl():
 
 
 class DVPN():
-    def __init__(self, name, configs, path, netlogger):
+    def __init__(self, name, configs, path, netlogger, netstat):
         self.name = name
         self.net_interface = 'net-' + name
         self.eth_address = configs['eth-address']
@@ -192,6 +210,7 @@ class DVPN():
         self.netlogger = netlogger
         self.used = 0
         self.last_netlog_time = 0
+        self.netstat = netstat
         self.update_used()
 
     # status
@@ -252,7 +271,12 @@ class DVPN():
                 except:
                     print('failed to read net log:', line)
                     pass
-        self.used = last_used
+
+        current_net = self.netstat.get_interfaces()
+        current_used = float(current_net[self.net_interface]["receive-bytes"]) + float(current_net[self.net_interface]["transmit-bytes"])
+        print('DVPN.update_used', current_used, last_used)
+
+        self.used = current_used - last_used
         self.last_netlog_time = last_netlog_time
 
         if (self.data_plan * 1000000000 <= self.used) and (self.status == "Running"):
@@ -325,6 +349,7 @@ class DVPN():
     def update_auto_bandwidth(self):
         if self.auto_bandwidth:
             todayDate = datetime.date.today()
+            month_start = time.mktime(todayDate.replace(day=1).timetuple())
             nextMonthDate = todayDate.replace(day=1).replace(month=todayDate.month%12+1)
             if nextMonthDate.month == 1:
                 nextMonthDate = nextMonthDate.replace(year=todayDate.year+1)
@@ -480,17 +505,18 @@ class Controller():
 
         # netstat
         self.stat_logger = os.path.join(path, "config", "netstat.log")
-        self.netstat = Ifconfig({'net-' + dvpn: {} for dvpn in self.dvpn_config})
+        self.recent_his = os.path.join(path, "config", "recent_history.log")
+        self.netstat = Ifconfig({'net-' + dvpn: {} for dvpn in self.dvpn_config}, self.recent_his)
         # cmds = ['mv', self.stat_logger, os.path.join(path, "config", "netstat.log.old")] 
         # print(cmds)
         # p = subprocess.Popen(cmds, stdout=subprocess.PIPE)
         # p.kill()
-        self.write_interval = 30 # write every 30 minutes
+        self.write_interval = SAVE_INTERVAL # write every 30 minutes
         self.log_netstat(0, 60) # collect every minute
 
         # set up dvpn rules following the last configuration
         for dvpn in self.dvpn_config:
-            self.dvpns[dvpn] = DVPN(dvpn, self.dvpn_config[dvpn], self.path, self.stat_logger)
+            self.dvpns[dvpn] = DVPN(dvpn, self.dvpn_config[dvpn], self.path, self.stat_logger, self.netstat)
             if default_flag:
                 self.update_vpn(dvpn, self.dvpn_config[dvpn], force=True)
         self.save()

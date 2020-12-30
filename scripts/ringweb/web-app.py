@@ -48,7 +48,7 @@ class RingWebService(object):
                     return "ERROR"
             elif params['action'] == 'netstat':
                 h = json.dumps(self.controller.get_history())
-                cherrypy.log("test_netstat" + str(h))
+                # cherrypy.log("test_netstat" + str(h))
                 return h
             elif params['action'] == 'running-status':
                 pass
