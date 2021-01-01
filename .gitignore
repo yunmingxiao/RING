@@ -11,4 +11,4 @@ resources/
 *dir/
 **/*.pyc
 **/__pycache_
-_
+scripts/policy/*_custom.py
