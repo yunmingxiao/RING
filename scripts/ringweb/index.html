@@ -55,7 +55,7 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
             for (var dp in data[dvpn]) {
               d.dataPoints.push({
                 x: data[dvpn][dp]['time'], 
-                y: data[dvpn][dp]['bps'] * 8 / 1000000.0,
+                y: data[dvpn][dp]['Bps'] * 8 / 1000000.0,
               });
             }
             chartData.push(d);

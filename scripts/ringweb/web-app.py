@@ -62,6 +62,13 @@ class RingWebService(object):
             elif params['action'] == 'terminate':
                 self.controller.terminate(page)
                 # return "Terminating..."
+            elif params['action'] == 'errors':
+                return self.controller.get_policy_errors(page)
+            elif params['action'] == 'code':
+                return self.controller.get_policy(page)
+            elif params['action'] == 'restore_default':
+                return self.controller.restore_default_policy(page)
+
             return self.controller.get_status(page)
         
         elif (page == "index"):
@@ -98,6 +105,10 @@ class RingWebService(object):
             
         elif (url_splits[-1] in self.dvpns):
             self.controller.update_vpn(url_splits[-1], body)
+
+        elif ('-custom-code' in url_splits[-1]):
+            dvpn = url_splits[-1].split('-custom-code')[0]
+            self.controller.update_policy(dvpn, body['code'])
         
         else:
             cherrypy.response.status = 404

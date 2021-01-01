@@ -16,6 +16,34 @@ import iptc
 from helpers import controller2web
 from generate_ipset import IPSet
 
+import importlib
+import policy.mysterium_default as policy_mysterium_default
+import policy.sentinel_default as policy_sentinel_default
+import policy.tachyon_default as policy_tachyon_default
+policy_default = {'mysterium': policy_mysterium_default, 
+                  'sentinel': policy_sentinel_default, 
+                  'tachyon': policy_tachyon_default}
+
+policy_exceptions = {'mysterium': [], 'sentinel': [], 'tachyon': []}
+policy_custom = {'mysterium': policy_mysterium_default, 
+                  'sentinel': policy_sentinel_default, 
+                  'tachyon': policy_tachyon_default}
+try:
+    import policy.mysterium_custom as policy_mysterium_custom
+    policy_custom['mysterium'] = policy_mysterium_custom
+except Exception as e:
+    policy_exceptions['mysterium'].append(e)
+try:
+    import policy.sentinel_custom as policy_sentinel_custom
+    policy_custom['sentinel'] = policy_sentinel_custom
+except Exception as e:
+    policy_exceptions['sentinel'].append(e)
+try:
+    import policy.tachyon_custom as policy_tachyon_custom
+    policy_custom['tachyon'] = policy_tachyon_custom
+except Exception as e:
+    policy_exceptions['tachyon'].append(e)
+
 
 SAVE_INTERVAL = 30
 
@@ -109,10 +137,20 @@ class Ifconfig():
                 for h in range(1, len(self.history)):
                     ret[face].append({
                         'time': int(self.history[h][i]['time'] * 1000),
-                        'bps': (self.history[h][i]['bytes'] - self.history[h-1][i]['bytes']) / (self.history[h][i]['time'] - self.history[h-1][i]['time']),
+                        'Bps': (self.history[h][i]['bytes'] - self.history[h-1][i]['bytes']) / (self.history[h][i]['time'] - self.history[h-1][i]['time']),
                     })
         return ret
 
+    def get_history_by_interface(self, interface):
+        ret = []
+        face = interface.replace('net-', '')
+        if self.interfaces[interface]:
+            for h in range(1, len(self.history)):
+                ret.append({
+                    'time': int(self.history[h][interface]['time'] * 1000),
+                    'Bps': (self.history[h][interface]['bytes'] - self.history[h-1][interface]['bytes']) / (self.history[h][interface]['time'] - self.history[h-1][interface]['time']),
+                })
+        return ret
 
 
 class TrafficControl():
@@ -199,8 +237,16 @@ class DVPN():
         self.data_plan = configs['data-plan']
         self.bandwidth_limit = configs['bandwidth-limit']
         self.auto_bandwidth = configs['auto-bandwidth']
+        if 'custom-bandwidth-policy' in configs:
+            self.custom_bandwidth_policy = configs['custom-bandwidth-policy']
+        else:
+            self.custom_bandwidth_policy = False
         self.price_setting = configs['price-setting']
         self.auto_price = configs['auto-price']
+        if 'custom-price-policy' in configs:
+            self.custom_price_policy = configs['custom-price-policy']
+        else:
+            self.custom_price_policy = False
 
         self.status = "Inactive"
         self.update_status()
@@ -290,8 +336,10 @@ class DVPN():
         configs['data-plan'] = self.data_plan
         configs['bandwidth-limit'] = self.bandwidth_limit
         configs['auto-bandwidth'] = self.auto_bandwidth
+        configs['custom-bandwidth-policy'] = self.custom_bandwidth_policy
         configs['price-setting'] = self.price_setting
         configs['auto-price'] = self.auto_price
+        configs['custom-price-policy'] = self.custom_price_policy
         configs['used-data'] = self.used
         return configs
 
@@ -317,6 +365,9 @@ class DVPN():
             self.auto_bandwidth = configs['auto-bandwidth']
             self.update_auto_bandwidth()
             update = True
+        if force or (self.auto_bandwidth != configs['custom-bandwidth-policy']):
+            self.custom_bandwidth_policy = configs['custom-bandwidth-policy']
+            update = True
         if force or (self.price_setting != configs['price-setting']):
             self.update_price_setting(configs['price-setting'])
             self.price_setting = configs['price-setting']
@@ -324,6 +375,9 @@ class DVPN():
         if force or (self.auto_price != configs['auto-price']):
             self.auto_price = configs['auto-price']
             self.update_auto_price()
+            update = True
+        if force or (self.auto_bandwidth != configs['custom-price-policy']):
+            self.custom_price_policy = configs['custom-price-policy']
             update = True
         return update
         
@@ -343,8 +397,8 @@ class DVPN():
         pass
 
     def update_bandwidth_limit(self):
-        self.tc.add_rule(self.net_interface, direction='outgoing', rate_limit=self.bandwidth_limit*1000000.0)
-        self.tc.add_rule(self.net_interface, direction='incoming', rate_limit=self.bandwidth_limit*1000000.0)
+        self.tc.add_rule(self.net_interface, direction='outgoing', rate_limit=self.bandwidth_limit*1000000/2.0)
+        self.tc.add_rule(self.net_interface, direction='incoming', rate_limit=self.bandwidth_limit*1000000/2.0)
 
     def update_auto_bandwidth(self):
         if self.auto_bandwidth:
@@ -355,8 +409,27 @@ class DVPN():
                 nextMonthDate = nextMonthDate.replace(year=todayDate.year+1)
             next_month = time.mktime(nextMonthDate.timetuple())
             now = time.time()
-            bandwidth_left = 8 * (self.data_plan * 1000000000 - self.used) / (next_month - now) / 1000000.0
-            self.bandwidth_limit = bandwidth_left
+            # bandwidth_left = 8 * (self.data_plan * 1000000000 - self.used) / (next_month - now) / 1000000.0
+            # self.bandwidth_limit = bandwidth_left
+            fail_flag = False
+            if self.custom_bandwidth_policy:
+                try:
+                    self.bandwidth_limit = policy_custom[self.name].bandwidth_policy(
+                        now, month_start, next_month, 
+                        self.data_plan * 1000000000, self.used, 
+                        self.bandwidth_limit,
+                        self.netstat.get_history_by_interface(self.net_interface)[-SAVE_INTERVAL:]
+                    )
+                except Exception as e:
+                    policy_exceptions[self.name].append(e)
+                    fail_flag = True
+            if (not self.custom_bandwidth_policy or fail_flag):
+                self.bandwidth_limit = policy_default[self.name].bandwidth_policy(
+                    now, month_start, next_month, 
+                    self.data_plan * 1000000000, self.used, 
+                    self.bandwidth_limit,
+                    self.netstat.get_history_by_interface(self.net_interface)[-SAVE_INTERVAL:]
+                )
             self.update_bandwidth_limit()
 
     def update_price_setting(self, price_setting, price2=None):
@@ -378,13 +451,41 @@ class DVPN():
 
     def update_auto_price(self):
         if self.auto_price:
+            todayDate = datetime.date.today()
+            month_start = time.mktime(todayDate.replace(day=1).timetuple())
+            nextMonthDate = todayDate.replace(day=1).replace(month=todayDate.month%12+1)
+            if nextMonthDate.month == 1:
+                nextMonthDate = nextMonthDate.replace(year=todayDate.year+1)
+            next_month = time.mktime(nextMonthDate.timetuple())
+            now = time.time()
+            price, prices_in_network = 0.1, []
             try: 
                 req = requests.get('http://165.124.180.66:45678/prices/%s' % (self.name))
-                prs = json.loads(req.content)
-                self.update_price_setting(prs[1], prs[0])
-                self.price_setting = prs[1]
+                prices_in_network = json.loads(req.content)
             except Exception as e:
-                print('DVPN.update_auto_price error', e, req)
+                print('DVPN.update_auto_price failed', e)
+            if self.custom_price_policy:
+                try:
+                    price = policy_custom[self.name].price_policy(
+                        now, month_start, next_month, 
+                        self.data_plan * 1000000000, self.used, 
+                        self.price_setting, prices_in_network
+                    )
+                except Exception as e:
+                    policy_exceptions[self.name].append(e)
+                    fail_flag = True
+            if (not self.custom_price_policy or fail_flag):
+                price = policy_default[self.name].price_policy(
+                    now, month_start, next_month, 
+                    self.data_plan * 1000000000, self.used, 
+                    self.price_setting, prices_in_network
+                )
+            if type(price) is list:
+                self.update_price_setting(price[1], price[0])
+                self.price_setting = price[1]
+            else:
+                self.update_price_setting(price)
+                self.price_setting = price
 
 
 class IPTableManager():
@@ -621,6 +722,57 @@ class Controller():
         self.dvpns[vpn].terminate()
         self.dvpns[vpn].start()
         return self.dvpns[vpn].get_status()
+
+
+    # configure
+    def get_policy_errors(self, vpn):
+        error_msg = ''
+        global policy_exceptions
+        for err in policy_exceptions[vpn]:
+            error_msg += str(err) + '\n'
+        return error_msg
+
+    def get_policy(self, vpn):
+        policy_file = os.path.join(self.path, "policy", "%s_custom.py" % vpn)
+        code = ''
+        with open(policy_file, 'r') as fp:
+            code = fp.read()
+        return code
+
+    def update_policy(self, vpn, policy_code):
+        self.log_operation('Controller.update_policy: ' + vpn + ">>>>" 
+                            + policy_code.replace('\n', '\\n') + "<<<<")
+        policy_file = os.path.join(self.path, "policy", "%s_custom.py" % vpn)
+        with open(policy_file, 'w') as fp:
+            fp.write(policy_code)
+
+        global policy_exceptions
+        global policy_custom
+        try:
+            policy_exceptions[vpn].clear()
+            importlib.reload(policy_custom[vpn]) 
+        except Exception as e:
+            policy_exceptions[vpn].append(e)
+        return self.get_policy_errors(vpn)
+
+    def restore_default_policy(self, vpn):
+        self.log_operation('Controller.restore_default_policy: ' + vpn)
+        policy_file_default = os.path.join(self.path, "policy", "%s_default.py" % vpn)
+        policy_file_custom = os.path.join(self.path, "policy", "%s_custom.py" % vpn)
+        code = ''
+        with open(policy_file_default, 'r') as fp:
+            code = fp.read()
+        with open(policy_file_custom, 'w') as fp:
+            fp.write(code)
+            
+        global policy_exceptions
+        global policy_custom
+        try:
+            policy_exceptions[vpn].clear()
+            importlib.reload(policy_custom[vpn]) 
+        except Exception as e:
+            policy_exceptions[vpn].append(e)
+        return self.get_policy_errors(vpn)
 
 
     # default config
