@@ -30,7 +30,11 @@ def bandwidth_policy(now, month_start, next_month,
     """
     left_data = (data_plan - used_data) * 8 # bytes to bits
     time_left = next_month - now
-    new_ratio = curr_bandwidth_limit \
+    if (len(bandwidth_history) == 0
+        or 60*8*sum([bh['Bps'] for bh in bandwidth_history]) == 0):
+        new_ratio = 1
+    else:
+        new_ratio = curr_bandwidth_limit \
                 / (60*8*sum([bh['Bps'] for bh in bandwidth_history])) \
                 / (len(bandwidth_history)*60)
 
