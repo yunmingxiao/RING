@@ -365,7 +365,7 @@ class DVPN():
             self.auto_bandwidth = configs['auto-bandwidth']
             self.update_auto_bandwidth()
             update = True
-        if force or (self.auto_bandwidth != configs['custom-bandwidth-policy']):
+        if force or (self.custom_bandwidth_policy != configs['custom-bandwidth-policy']):
             self.custom_bandwidth_policy = configs['custom-bandwidth-policy']
             update = True
         if force or (self.price_setting != configs['price-setting']):
@@ -376,7 +376,7 @@ class DVPN():
             self.auto_price = configs['auto-price']
             self.update_auto_price()
             update = True
-        if force or (self.auto_bandwidth != configs['custom-price-policy']):
+        if force or (self.custom_price_policy != configs['custom-price-policy']):
             self.custom_price_policy = configs['custom-price-policy']
             update = True
         return update
