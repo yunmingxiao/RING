@@ -7,6 +7,10 @@ result_processing/tmp/
 notes/servers.txt
 scripts/tmp/
 scripts/config/*.log
+scripts/policy/*_custom.py
+scripts/policy/mysterium_custom.py
+scripts/policy/sentinel_custom.py
+scripts/policy/tachyon_custom.py
 resources/
 *dir/
 **/*.pyc
