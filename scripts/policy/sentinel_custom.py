@@ -51,10 +51,10 @@ def bandwidth_policy(now, month_start, next_month,
     new_limit = curr_bandwidth_limit * left_data / left_time / bwlimit_time_ratio
 
     # set the max and min threshold
-    if new_limit > 3200 * 1000000:
-        new_limit = 3200 * 1000000
-    elif new_limit < 0.1 * 1000000:
-        new_limit = 0.1 * 1000000
+    if new_limit > 3200:
+        new_limit = 3200
+    elif new_limit < 0.01:
+        new_limit = 0.01
     return new_limit
 
 def price_policy(month_start, now, next_month,
