@@ -29,14 +29,17 @@ def bandwidth_policy(now, month_start, next_month,
 
     """
     left_data = (data_plan - used_data) * 8 # bytes to bits
-    time_left = next_month - now
-    if (len(bandwidth_history) == 0
-        or 60*8*sum([bh['Bps'] for bh in bandwidth_history]) == 0):
-        new_ratio = 1
+    left_time = next_month - now
+    if left_time <= 0:
+        return curr_bandwidth_limit
+    used_data_last = 60 * 8 * sum([bh['Bps'] for bh in bandwidth_history])
+    used_time_last = 60 * len(bandwidth_history)
+
+    if (used_time_last == 0 or used_data_last == 0):
+        # no historical data, just keep the current settings
+        new_ratio = left_data / left_time
     else:
-        new_ratio = curr_bandwidth_limit \
-                / (60*8*sum([bh['Bps'] for bh in bandwidth_history])) \
-                / (len(bandwidth_history)*60)
+        new_ratio = used_data_last / used_time_last
 
     global bwlimit_time_ratio
     if bwlimit_time_ratio <= 0:
@@ -45,7 +48,13 @@ def bandwidth_policy(now, month_start, next_month,
     # update the ratio
     bwlimit_time_ratio = 0.5 * new_ratio + 0.5 * bwlimit_time_ratio
     
-    new_limit = curr_bandwidth_limit * left_data / time_left / bwlimit_time_ratio
+    new_limit = curr_bandwidth_limit * left_data / left_time / bwlimit_time_ratio
+
+    # set the max and min threshold
+    if new_limit > 3200 * 1000000:
+        new_limit = 3200 * 1000000
+    elif new_limit < 0.1 * 1000000:
+        new_limit = 0.1 * 1000000
     return new_limit
 
 def price_policy(month_start, now, next_month,
