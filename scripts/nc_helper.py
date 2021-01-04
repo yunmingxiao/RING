@@ -361,23 +361,23 @@ class DVPN():
             self.bandwidth_limit = configs['bandwidth-limit']
             self.update_bandwidth_limit()
             update = True
+        if force or (self.custom_bandwidth_policy != configs['custom-bandwidth-policy']):
+            self.custom_bandwidth_policy = configs['custom-bandwidth-policy']
+            update = True
         if force or (self.auto_bandwidth != configs['auto-bandwidth']):
             self.auto_bandwidth = configs['auto-bandwidth']
             self.update_auto_bandwidth()
-            update = True
-        if force or (self.custom_bandwidth_policy != configs['custom-bandwidth-policy']):
-            self.custom_bandwidth_policy = configs['custom-bandwidth-policy']
             update = True
         if force or (self.price_setting != configs['price-setting']):
             self.update_price_setting(configs['price-setting'])
             self.price_setting = configs['price-setting']
             update = True
+        if force or (self.custom_price_policy != configs['custom-price-policy']):
+            self.custom_price_policy = configs['custom-price-policy']
+            update = True
         if force or (self.auto_price != configs['auto-price']):
             self.auto_price = configs['auto-price']
             self.update_auto_price()
-            update = True
-        if force or (self.custom_price_policy != configs['custom-price-policy']):
-            self.custom_price_policy = configs['custom-price-policy']
             update = True
         return update
         
@@ -815,6 +815,8 @@ class Controller():
                 "auto-bandwidth": False,
                 "price-setting": 0.1,
                 "auto-price": False,
+                "custom-bandwidth-policy": False,
+                "custom-price-policy": False,
             },
             'sentinel': {
                 "eth-address": "0xFb6be8eAb6899C6Ec2bb859cae96094867Dbc733", 
@@ -823,6 +825,8 @@ class Controller():
                 "auto-bandwidth": False,
                 "price-setting": 0.01,
                 "auto-price": False,
+                "custom-bandwidth-policy": False,
+                "custom-price-policy": False,
             },
             'tachyon': {
                 "eth-address": "0xFb6be8eAb6899C6Ec2bb859cae96094867Dbc733", 
@@ -831,6 +835,8 @@ class Controller():
                 "auto-bandwidth": False,
                 "price-setting": 0.01,
                 "auto-price": False,
+                "custom-bandwidth-policy": False,
+                "custom-price-policy": False,
             },
         }
 
