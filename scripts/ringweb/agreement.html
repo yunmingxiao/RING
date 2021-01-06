@@ -38,6 +38,12 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
     });
   }
 
+  function MenuSelect() {
+    var menus = document.URL.split("/");
+    var current_menu = "a-" + menus[menus.length - 1];
+    document.getElementById(current_menu).className = "menu-selected";
+  }
+
   // Used to toggle the menu on small screens when clicking on the menu button
   function myFunction() {
     var x = document.getElementById("navDemo");
@@ -50,6 +56,20 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
 </script>
 
 <body onload="">
+
+<!-- Navbar -->
+<div class="w3-top">
+  <div class="w3-bar w3-grey w3-card w3-left-align w3-large">
+    <a class="w3-bar-item w3-button w3-hide-medium w3-hide-large w3-right w3-padding-large w3-hover-white w3-large w3-grey" href="javascript:void(0);" onclick="myFunction()" title="Toggle Navigation Menu"><i class="fa fa-bars"></i></a>
+    <a href="index" class="menu-unselect" id="a-index">Overall</a>
+    <!-- <a href="password" class="menu-unselect" id="a-password">Password Reset</a> -->
+    <a href="mysterium" class="menu-unselect" id="a-mysterium">Mysterium</a>
+    <a href="sentinel" class="menu-unselect" id="a-sentinel">Sentinel</a>
+    <a href="tachyon" class="menu-unselect" id="a-tachyon">Tachyon</a>
+    <a href="agreement" class="menu-unselect" id="a-agreement">Agreement</a>
+    <!-- <a href="tachyon" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Tachyon</a> -->
+  </div>
+</div>
 
 <!-- Header -->
 <!-- <header class="w3-container w3-grey w3-center" style="padding:128px 16px">
