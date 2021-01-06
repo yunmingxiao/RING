@@ -29,8 +29,12 @@ class RingWebService(object):
 
     def get_agreement(self):
         agreement = 'False'
-        with open('user-agreement.txt', 'a+') as fp:
-            agreement = fp.read()
+        try:
+            with open('user-agreement.txt', 'r') as fp:
+                agreement = fp.read()
+        except Exception as e:
+            print('RingWebService.get_agreement', e)
+
         if agreement == 'True':
             return True
         else:
