@@ -28,19 +28,52 @@ policy_exceptions = {'mysterium': [], 'sentinel': [], 'tachyon': []}
 policy_custom = {'mysterium': policy_mysterium_default, 
                   'sentinel': policy_sentinel_default, 
                   'tachyon': policy_tachyon_default}
+
+def new_custom_policy(vpn):
+    policy_file_default = os.path.join(os.getcwd()+'/..', "policy", "%s_default.py" % vpn)
+    policy_file_custom = os.path.join(os.getcwd()+'/..', "policy", "%s_custom.py" % vpn)
+    code = ''
+    with open(policy_file_default, 'r') as fp:
+        code = fp.read()
+    with open(policy_file_custom, 'w') as fp:
+        fp.write(code)
+
 try:
     import policy.mysterium_custom as policy_mysterium_custom
     policy_custom['mysterium'] = policy_mysterium_custom
+except ModuleNotFoundError:
+    new_custom_policy('mysterium')
+    try:
+        import policy.mysterium_custom as policy_mysterium_custom
+        policy_custom['mysterium'] = policy_mysterium_custom
+    except Exception as e:
+        policy_exceptions['mysterium'].append(e)
 except Exception as e:
     policy_exceptions['mysterium'].append(e)
+
 try:
     import policy.sentinel_custom as policy_sentinel_custom
     policy_custom['sentinel'] = policy_sentinel_custom
+except ModuleNotFoundError:
+    new_custom_policy('sentinel')
+    try:
+        import policy.sentinel_custom as policy_sentinel_custom
+        policy_custom['sentinel'] = policy_sentinel_custom
+    except Exception as e:
+        policy_exceptions['sentinel'].append(e)
 except Exception as e:
     policy_exceptions['sentinel'].append(e)
+
 try:
     import policy.tachyon_custom as policy_tachyon_custom
     policy_custom['tachyon'] = policy_tachyon_custom
+except ModuleNotFoundError:
+    new_custom_policy('tachyon')
+    try:
+        import policy.tachyon_custom as policy_tachyon_custom
+        policy_custom['tachyon'] = policy_tachyon_custom
+    except Exception as e:
+        policy_exceptions['tachyon'].append(e)
 except Exception as e:
     policy_exceptions['tachyon'].append(e)
 
