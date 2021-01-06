@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<title>W3.CSS Template</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+<style>
+body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
+.w3-bar,h1,button {font-family: "Montserrat", sans-serif}
+.fa-anchor,.fa-coffee {font-size:200px}
+.menu-unselect {float:left;width:auto;border:none;display:block;outline:0;white-space:normal;padding:12px 24px;text-decoration:none}
+.menu-unselect:hover{color:#000!important;background-color:#fff!important}
+.menu-selected {float:left;width:auto;border:none;display:block;outline:0;white-space:normal;padding:12px 24px;text-decoration:none;color:#000!important;background-color:#fff!important}
+.options-all,.options {padding-top: 8px; width: 135px; text-align: left; float:left!important; display:table-cell;}
+.option-box-all,.option-box {width:24px;height:24px;position:relative;top:6px; padding-right: 8px; float:left!important; display:table-cell;}
+</style>
+
+<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+<script>
+  function Agree(op) {
+    $.ajax({
+      type : "PUT",
+      url : document.URL,
+      data: {"action": op},
+      dataType: "json",
+      success: function(data) {
+        if (data.redirect) {
+            // data.redirect contains the string URL to redirect to
+            window.location.href = data.redirect;
+        }
+      }
+    });
+  }
+
+  // Used to toggle the menu on small screens when clicking on the menu button
+  function myFunction() {
+    var x = document.getElementById("navDemo");
+    if (x.className.indexOf("w3-show") == -1) {
+      x.className += " w3-show";
+    } else { 
+      x.className = x.className.replace(" w3-show", "");
+    }
+  }
+</script>
+
+<body onload="">
+
+<!-- Header -->
+<!-- <header class="w3-container w3-grey w3-center" style="padding:128px 16px">
+  <h1 class="w3-margin w3-jumbo">START PAGE</h1>
+  <p class="w3-xlarge">Template by w3.css</p>
+  <button class="w3-button w3-black w3-padding-large w3-large w3-margin-top">Get Started</button>
+</header> -->
+
+<!-- Second Grid -->
+<div class="w3-row-padding w3-light-grey w3-padding-64 w3-container">
+  <div class="w3-content">
+    <h2 class="w3-col w3-center"> User Agreement </h2>
+    <div class="w3-col"><p style="visibility:hidden">padding</p></div>
+
+    <div class="w3-center w3-row w3-section" style="padding-top: 8px">
+      <div class="w3-col s2 w3-center"><p style="visibility:hidden">padding</p></div>
+      <textarea class="w3-col s8 category" disabled style="color:black; height:600px; padding: 5px;">
+Request to Participate in Research
+
+We would like to invite you to take part in a research project. The purpose of this research study is to understand the traffic characteristics of decentralized virtual private networks (DVPNs) and how the users interact with this software (RING). For example, we would like to know how much malicious DVPN traffic flow through your node, and how you choose to set the filters and control the DVPNs. Researchers from Northwestern University and Nokia Bell Labs will use this information to understand your preference on using the DVPNs and continue to improve this software.
+
+We are asking you to participate in this study because you have installed our software for managing the decentralized VPNs. The decision to participate in this research project is voluntary. You do not have to participate and you can uninstall the software at any time. Even if you begin using the sfotware, you can stop at any time. You must be at least 18 years of age to participate.
+
+You can start or terminate the DVPNs as many or as few times as you like. And you can control the filters, bandwidth, and policies as you wish.
+
+The possible risks or discomforts of the study are minimal. When you use the software, we will record the traffic it generates (including timestamps) and your interactions with this software. If available, we will collect information about coarse-grained location (no more precise than a 1km radius of your location). Data concerning the network performance you receive while running tests (including timestamps), as well as information about your geolocation information will be anonymized and will not be made publicly available. All other data will be shared only with co-investigators, and it will not be annotated with any personally identifiable information.
+
+Participating in this study will enable you to use the RING software to easily manage the DVPNs. You will not be paid for your participation in this study.
+
+Your part in this study is anonymous to the researcher(s). However, because of the nature of Internet traffic, it is possible that participants could be identified by the IP address or other electronic records associated with the response. We will anonymize any IP addresses that could be used to identify you once we have processed the data to detect differentiation. Any reports or publications based on this research will use only group data and will not identify you or any individual as being affiliated with this project.
+
+If you have any questions about this study, please feel free to e-mail the project team at yunming.xiao@u.northwestern.edu, and the person mainly responsible for the research will respond.
+
+If you have any questions about your rights in this research, you may contact someone, Northwestern University, Evanston, IL 60208. Tel: xxx.xxx.xxxx, Email: xxx@xxx. You may call anonymously if you wish.
+
+If you have any questions regarding electronic privacy, please feel free to contact xxx via phone at xxx.xxx.xxxx, or via email at xxx@xxx.
+
+This study has been reviewed and approved by the Northwestern University Institutional Review Board (#xxxx).
+      </textarea>
+    </div>
+
+    <div class="w3-center" style="padding-top: 16px">
+      <p>
+        Please carefully read the user agreement and choose if you agree to continue. 
+      </p>
+      <button onclick="Agree('disagree')" style="margin-right: 16px;">No, I don't agree</button>
+      <button onclick="Agree('agree')">Yes, I agree</button>
+    </div>
+  </div>
+</div>
+
+<div class="w3-container w3-black w3-center w3-opacity w3-padding-64">
+    <h1 class="w3-margin w3-xlarge">Contact Us</h1>
+    <h5 class="w3-padding">
+      <i class="material-icons">email</i><a href="mailto:safekodi.team@gmail.com">RING Team
+    </a></h5>
+</div>
+
+</body>
+</html>
