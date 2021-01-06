@@ -25,6 +25,24 @@ class RingWebService(object):
     def __init__(self):
         self.dvpns = ['mysterium', 'sentinel', 'tachyon']
         self.controller = nc_helper.Controller(os.getcwd() + '/..')
+        self.agree = self.get_agreement()
+
+    def get_agreement(self):
+        agreement = 'False'
+        with open('user-agreement.txt', 'a+') as fp:
+            agreement = fp.read()
+        if agreement == 'True':
+            return True
+        else:
+            return False
+
+    def exec_agree(self, content):
+        if content == 'True':
+            self.agree = True
+        else:
+            self.agree = False
+        with open('user-agreement.txt', 'w+') as fp:
+            fp.write(content)
 
     #@cherrypy.tools.accept(media='text/plain')
     def GET(self, var=None, **params):
@@ -32,6 +50,12 @@ class RingWebService(object):
         cherrypy.log(str(var), str(params))
         url_splits = cherrypy.url().split('/')
         page = url_splits[-1]
+        
+        if (page == 'agreement'):
+            return serve_file(os.path.join(current_dir, "agreement.html"), content_type='text/html')
+        if (not self.agree):
+            raise cherrypy.HTTPRedirect("/agreement")
+
         if 'action' in params:
             if params['action'] == 'status':
                 # cherrypy.response.headers["Content-Type"] = "application/json"
@@ -70,7 +94,10 @@ class RingWebService(object):
                 return self.controller.restore_default_policy(page)
 
             return self.controller.get_status(page)
-        
+
+        elif (var is None):
+            raise cherrypy.HTTPRedirect("/index")
+
         elif (page == "index"):
             return serve_file(os.path.join(current_dir, "index.html"), content_type='text/html')
 
@@ -86,9 +113,7 @@ class RingWebService(object):
             
     def POST(self, var=None, **params):
         ret_code = 200
-        result = []
         ans = ''
-
         cherrypy.log("POST!!!")
         body = read_json(cherrypy.request)
         cherrypy.log(str(body))
@@ -116,8 +141,21 @@ class RingWebService(object):
 
         return ans.encode('utf8')
 
-    def PUT(self, another_string):
-        return 'PUT'
+    def PUT(self, var=None, **params):
+        cherrypy.log("PUT!!!")
+        cherrypy.log(str(var), str(params))
+
+        if (var == 'agreement' and params['action'] == 'agree'):
+            self.exec_agree('True')
+            # raise cherrypy.HTTPRedirect("/index")
+            return json.dumps({'redirect': cherrypy.url().replace('agreement', 'index')})
+        elif (var == 'agreement' and params['action'] == 'disagree'):
+            self.exec_agree('False')
+            # raise cherrypy.HTTPRedirect("/index")
+            return "SUCCESS"
+        else:
+            cherrypy.response.status = 404
+            return "ERROR"
 
     def DELETE(self):
         return 'DELETE'
