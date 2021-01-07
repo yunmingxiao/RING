@@ -514,8 +514,8 @@ class DVPN():
                     self.price_setting, prices_in_network
                 )
             if type(price) is list:
-                self.update_price_setting(price[1], price[0])
-                self.price_setting = price[1]
+                self.update_price_setting(price[0], price[1])
+                self.price_setting = price[0]
             else:
                 self.update_price_setting(price)
                 self.price_setting = price
