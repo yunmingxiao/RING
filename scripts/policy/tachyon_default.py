@@ -1,5 +1,6 @@
 import datetime
 import time
+import statistics
 
 # Use global variables to store neccessary states across function calls
 bwlimit_time_ratio = 0
@@ -79,6 +80,9 @@ def price_policy(month_start, now, next_month,
         The current service price
     prices_in_network : json
         The service prices of other dVPN nodes in the network
-
+        Note: sometimes the field "price_per_min" is not present
+        [{"account_addr": str, "location": {"country": "US"}, "price_per_GB": float, "price_per_min": float, ...}, ...]
     """
-    return prices_in_network
+    prices_per_gb = [p['price_per_GB'] for p in prices_in_network]
+    prices_per_min = [p['price_per_min'] for p in prices_in_network]
+    return [statistics.median(prices_per_gb), statistics.median(prices_per_min)]

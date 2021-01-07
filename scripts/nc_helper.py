@@ -471,7 +471,7 @@ class DVPN():
         cmds = ['/bin/bash', 'subscripts/update_price.sh', self.name, str(price_setting)]
         if self.name == 'mysterium':
             if price2 is None:
-                cmds.append(str(price_setting / 1000.0))
+                cmds.append(str(price_setting * 1000.0))
             else:
                 cmds.append(str(price2))
         print(os.getcwd(), cmds)
@@ -497,6 +497,8 @@ class DVPN():
                 prices_in_network = json.loads(req.content)
             except Exception as e:
                 print('DVPN.update_auto_price failed', e)
+
+            fail_flag = False
             if self.custom_price_policy:
                 try:
                     price = policy_custom[self.name].price_policy(
@@ -846,7 +848,7 @@ class Controller():
                 "data-plan": 200,
                 "bandwidth-limit": 5,
                 "auto-bandwidth": False,
-                "price-setting": 0.1,
+                "price-setting": 0.0001,
                 "auto-price": False,
                 "custom-bandwidth-policy": False,
                 "custom-price-policy": False,
@@ -856,7 +858,7 @@ class Controller():
                 "data-plan": 200,
                 "bandwidth-limit": 5,
                 "auto-bandwidth": False,
-                "price-setting": 0.01,
+                "price-setting": 50.0,
                 "auto-price": False,
                 "custom-bandwidth-policy": False,
                 "custom-price-policy": False,
@@ -866,7 +868,7 @@ class Controller():
                 "data-plan": 200,
                 "bandwidth-limit": 5,
                 "auto-bandwidth": False,
-                "price-setting": 0.01,
+                "price-setting": 100.0,
                 "auto-price": False,
                 "custom-bandwidth-policy": False,
                 "custom-price-policy": False,
