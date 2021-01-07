@@ -84,5 +84,4 @@ def price_policy(month_start, now, next_month,
         [{"account_addr": str, "location": {"country": "US"}, "price_per_GB": float, "price_per_min": float, ...}, ...]
     """
     prices_per_gb = [p['price_per_GB'] for p in prices_in_network]
-    prices_per_min = [p['price_per_min'] for p in prices_in_network]
-    return [statistics.median(prices_per_gb), statistics.median(prices_per_min)]
+    return statistics.median(prices_per_gb)
