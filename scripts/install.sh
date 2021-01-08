@@ -109,15 +109,7 @@ sudo sh get-docker.sh
 # non-privilege set up
 sudo groupadd docker
 sudo usermod -aG docker $USER
-if [[ "$arch" == "x86_64" ]]
-then
-newgrp docker << END
-echo "$USER"
-id
-END
-else 
 newgrp docker
-fi
 fi
 
 # pull the images
