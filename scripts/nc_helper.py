@@ -848,7 +848,7 @@ class Controller():
                 "data-plan": 200,
                 "bandwidth-limit": 5,
                 "auto-bandwidth": False,
-                "price-setting": 0.0001,
+                "price-setting": 0.1,
                 "auto-price": False,
                 "custom-bandwidth-policy": False,
                 "custom-price-policy": False,
