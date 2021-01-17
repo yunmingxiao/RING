@@ -2,7 +2,7 @@
 
 source download.sh
 
-ls -d */ | grep -v '__pycache__\|sample\|test' | sudo xargs rm -r
+ls -d */ | grep -v '__pycache__\|sample\|test' | | awk '{printf "%soutput/\n",$1}' | sudo xargs rm -r
 
 today=`date | awk '{printf "%s%s%s", $6, $2, $3}'`
 source new_dir.sh "${today}"
