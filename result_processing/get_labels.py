@@ -168,7 +168,7 @@ def get_label(filename):
         if count % 1000000 == 0:
             print('count', count)
         if req['dst_url'] is not None:
-            if req['dst_url'] not in label_dict_opendns:
+            '''if req['dst_url'] not in label_dict_opendns:
                 i_opendns += 1
                 if i_opendns % 300 == 0:
                     print('OpenDNS', i_opendns, success_opendns, count)
@@ -181,7 +181,7 @@ def get_label(filename):
                     print('Open DNS failed,', req['dst_url'])#, e)
                 #print(label_dict_opendns)
                 time.sleep(0.5)
-
+            '''
             if (req['dst_url'] not in label_dict_mcafee) or (req['dst_url'] not in security_dict_mcafee):
                 i_mcafee += 1
                 if i_mcafee % 100 == 0:
@@ -210,9 +210,9 @@ def get_label(filename):
                     except Exception as e:
                         print('McaFee failed 4,', req['dst_url'], e)
                 #print(label_dict_mcafee)
-                time.sleep(0.5)
+                time.sleep(1.0)
         
-    json.dump(label_dict_opendns, open("%s/filters/opendns.json" % (Constants.TARGET_DIR), "w"))
+    #json.dump(label_dict_opendns, open("%s/filters/opendns.json" % (Constants.TARGET_DIR), "w"))
     json.dump(label_dict_mcafee, open("%s/filters/mcafee_category.json" % (Constants.TARGET_DIR), "w"))
     json.dump(security_dict_mcafee, open("%s/filters/mcafee_security.json" % (Constants.TARGET_DIR), "w"))
 
