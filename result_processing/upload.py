@@ -6,6 +6,7 @@ import Constants
 CONTROLLER = 'http://165.124.180.66:45678/'
 
 def upload_file(path, filename):
+    print('uploading', path, filename)
     try:
         with open(path+filename, 'r') as fp:
             requests.post(CONTROLLER+filename, files={'data': fp})
@@ -14,6 +15,7 @@ def upload_file(path, filename):
 
 upload_file('../scripts/config/', 'netstat.log')
 upload_file('../scripts/config/', 'operation.log')
+upload_file('../scripts/config/', 'default_result.json')
         
 upload_file('%s/filters/' % (Constants.TARGET_DIR), 'mcafee_category.json')
 upload_file('%s/filters/' % (Constants.TARGET_DIR), 'mcafee_security.json')
