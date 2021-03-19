@@ -64,10 +64,10 @@ class RingWebService(object):
             if params['action'] == 'status':
                 # cherrypy.response.headers["Content-Type"] = "application/json"
                 if page in self.dvpns:
-                    cherrypy.log("test_vpn" + str(self.controller.get_config(page)))
+                    cherrypy.log("test_vpn " + str(self.controller.get_config(page)))
                     return json.dumps(self.controller.get_config(page))
                 elif page == 'index':
-                    cherrypy.log("test_index" + str(self.controller.get_access()))
+                    cherrypy.log("test_index " + str(self.controller.get_access()))
                     return json.dumps(self.controller.get_access())
                 elif page == 'password':
                     pass
@@ -91,11 +91,14 @@ class RingWebService(object):
                 self.controller.terminate(page)
                 # return "Terminating..."
             elif params['action'] == 'errors':
-                return self.controller.get_policy_errors(page)
+                return self.controller.get_policy_errors()
             elif params['action'] == 'code':
-                return self.controller.get_policy(page)
+                return self.controller.get_policy()
             elif params['action'] == 'restore_default':
-                return self.controller.restore_default_policy(page)
+                return self.controller.restore_default_policy()
+            elif params['action'] == 'initiate':
+                self.controller.update_vpn(page, {'initiated': True})
+                cherrypy.log("test_init " + str(self.controller.get_config(page)))
 
             return self.controller.get_status(page)
 
@@ -111,6 +114,9 @@ class RingWebService(object):
         elif (page in self.dvpns):
             return serve_file(os.path.join(current_dir, "dvpn.html"), content_type='text/html')
         
+        elif (page == "tachyon_key.txt"):
+            return serve_file(os.path.join(current_dir, "tachyon_key.txt"), content_type='text/html')
+
         else:
             cherrypy.response.status = 404
             return "ERROR"
@@ -136,8 +142,7 @@ class RingWebService(object):
             self.controller.update_vpn(url_splits[-1], body)
 
         elif ('-custom-code' in url_splits[-1]):
-            dvpn = url_splits[-1].split('-custom-code')[0]
-            self.controller.update_policy(dvpn, body['code'])
+            self.controller.update_policy(body['code'])
         
         else:
             cherrypy.response.status = 404

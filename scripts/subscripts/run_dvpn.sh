@@ -29,28 +29,51 @@ if [ $1 = 'mysterium' ]; then
     ip_myst=`cat ../conf/internal_myst.conf | cut -d'/' -f1`
     node_id=`sudo ls ${DIR_MYST}/keystore/ | grep UTC | cut -d'-' -f9`
 
+    password=`cat config/last.conf | python3 -c "import sys, json; print(json.load(sys.stdin)['dvpns']['mysterium']['password'])"`
     curl "http://${ip_myst}:4449/tequilapi/auth/login" \
     -H 'Accept: application/json, text/plain, */*' -H 'Content-Type: application/json;charset=UTF-8' \
-    --data-binary '{"username":"myst","password":"mystberry"}' \
+    --data-binary "{\"username\":\"myst\",\"password\":\"${password}\"}" \
     -c tmp/cookie_myst.txt
 
     eth_addr=`cat config/eth_mysterium.conf`
-    curl "http://${ip_myst}:4449/tequilapi/identities/0x${node_id}/payout" \
-    -X 'PUT' \
+    # curl "http://${ip_myst}:4449/tequilapi/identities/0x${node_id}/payout" \
+    # -X 'PUT' \
+    # -H 'Accept: application/json, text/plain, */*' -H 'Content-Type: application/json;charset=UTF-8' \
+    # -H "Origin: http://${ip_myst}:4449" \
+    # -H "Referer: http://${ip_myst}:4449/" \
+    # -b tmp/cookie_myst.txt \
+    # --data-binary "{\"eth_address\":\"${eth_addr}\"}"
+
+    curl "http://${ip_myst}:4449/tequilapi/identities/0x${node_id}/beneficiary" \
+    -X 'POST' \
     -H 'Accept: application/json, text/plain, */*' -H 'Content-Type: application/json;charset=UTF-8' \
     -H "Origin: http://${ip_myst}:4449" \
     -H "Referer: http://${ip_myst}:4449/" \
     -b tmp/cookie_myst.txt \
-    --data-binary "{\"eth_address\":\"${eth_addr}\"}"
+    --data-binary "{\"provider_id\":\"0x${node_id}\", \"beneficiary\":\"${eth_addr}\"}"
     
     price=`cat config/last.conf | python3 -c "import sys, json; print(json.load(sys.stdin)['dvpns']['mysterium']['price-setting'])"`
     price_per_min=`cat config/last.conf | python3 -c "import sys, json; print(json.load(sys.stdin)['dvpns']['mysterium']['price-setting']/1000.0)"`
+    # curl "http://${ip_myst}:4449/tequilapi/config/user" \
+    # -H 'Accept: application/json, text/plain, */*' -H 'Content-Type: application/json;charset=UTF-8' \
+    # -H "Origin: http://${ip_myst}:4449" \
+    # -H "Referer: http://${ip_myst}:4449/" \
+    # -b tmp/cookie_myst.txt \
+    # --data-binary "{\"data\":{\"payment\":{\"price-gb\":${price},\"price-minute\":${price_per_min}},\"shaper\":{\"enabled\":false},\"openvpn\":{\"port\":25000,\"price-gb\":null,\"price-minute\":null},\"wireguard\":{\"price-gb\":null,\"price-minute\":null},\"access-policy\":null}}"
+
     curl "http://${ip_myst}:4449/tequilapi/config/user" \
     -H 'Accept: application/json, text/plain, */*' -H 'Content-Type: application/json;charset=UTF-8' \
     -H "Origin: http://${ip_myst}:4449" \
     -H "Referer: http://${ip_myst}:4449/" \
     -b tmp/cookie_myst.txt \
-    --data-binary "{\"data\":{\"payment\":{\"price-gb\":${price},\"price-minute\":${price_per_min}},\"shaper\":{\"enabled\":false},\"openvpn\":{\"port\":25000,\"price-gb\":null,\"price-minute\":null},\"wireguard\":{\"price-gb\":null,\"price-minute\":null},\"access-policy\":null}}"
+    --data-binary "{\"data\":{\"openvpn\":{\"price-gb\":${price},\"price-minute\":${price_per_min}}}}"
+
+    curl "http://${ip_myst}:4449/tequilapi/config/user" \
+    -H 'Accept: application/json, text/plain, */*' -H 'Content-Type: application/json;charset=UTF-8' \
+    -H "Origin: http://${ip_myst}:4449" \
+    -H "Referer: http://${ip_myst}:4449/" \
+    -b tmp/cookie_myst.txt \
+    --data-binary "{\"data\":{\"wireguard\":{\"price-gb\":${price},\"price-minute\":${price_per_min}}}}"
 
     sleep 3
 
@@ -121,7 +144,9 @@ elif [ $1 == 'tachyon' ]; then
 
     sleep 10
     cat ${DIR_TACH}/tachyonWatchdogPsk | awk '{printf "tynm://?ip=x.x.x.x&k=%s", $0}' # the key for controller
-
+    psk=`cat ${DIR_TACH}/tachyonWatchdogPsk`
+    ip_self=`curl ifconfig.me`
+    echo "tynm://?ip=${ip_self}&k=${psk}" > ringweb/tachyon_key.txt
 else
     echo 'Unsupported dvpn'
 fi

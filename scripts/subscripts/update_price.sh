@@ -18,17 +18,33 @@ if [ $1 = 'mysterium' ]; then
     ip_myst=`cat ../conf/internal_myst.conf | cut -d'/' -f1`
     node_id=`sudo ls ${DIR_MYST}/keystore/ | grep UTC | cut -d'-' -f9`
 
+    password=`cat config/last.conf | python3 -c "import sys, json; print(json.load(sys.stdin)['dvpns']['mysterium']['password'])"`
     curl "http://${ip_myst}:4449/tequilapi/auth/login" \
     -H 'Accept: application/json, text/plain, */*' -H 'Content-Type: application/json;charset=UTF-8' \
-    --data-binary '{"username":"myst","password":"mystberry"}' \
+    --data-binary "{\"username\":\"myst\",\"password\":\"${password}\"}" \
     -c tmp/cookie_myst.txt
+
+    #curl "http://${ip_myst}:4449/tequilapi/config/user" \
+    #-H 'Accept: application/json, text/plain, */*' -H 'Content-Type: application/json;charset=UTF-8' \
+    #-H "Origin: http://${ip_myst}:4449" \
+    #-H "Referer: http://${ip_myst}:4449/" \
+    #-b tmp/cookie_myst.txt \
+    #--data-binary "{\"data\":{\"payment\":{\"price-gb\":${price},\"price-minute\":${price_per_min}},\"shaper\":{\"enabled\":false},\"openvpn\":{\"port\":25000,\"price-gb\":null,\"price-minute\":null},\"wireguard\":{\"price-gb\":null,\"price-minute\":null},\"access-policy\":null}}"
 
     curl "http://${ip_myst}:4449/tequilapi/config/user" \
     -H 'Accept: application/json, text/plain, */*' -H 'Content-Type: application/json;charset=UTF-8' \
     -H "Origin: http://${ip_myst}:4449" \
     -H "Referer: http://${ip_myst}:4449/" \
     -b tmp/cookie_myst.txt \
-    --data-binary "{\"data\":{\"payment\":{\"price-gb\":${price},\"price-minute\":${price_per_min}},\"shaper\":{\"enabled\":false},\"openvpn\":{\"port\":25000,\"price-gb\":null,\"price-minute\":null},\"wireguard\":{\"price-gb\":null,\"price-minute\":null},\"access-policy\":null}}"
+    --data-binary "{\"data\":{\"openvpn\":{\"price-gb\":${price},\"price-minute\":${price_per_min}}}}"
+
+    curl "http://${ip_myst}:4449/tequilapi/config/user" \
+    -H 'Accept: application/json, text/plain, */*' -H 'Content-Type: application/json;charset=UTF-8' \
+    -H "Origin: http://${ip_myst}:4449" \
+    -H "Referer: http://${ip_myst}:4449/" \
+    -b tmp/cookie_myst.txt \
+    --data-binary "{\"data\":{\"wireguard\":{\"price-gb\":${price},\"price-minute\":${price_per_min}}}}"
+
 
     service_id=`curl "http://${ip_myst}:4449/tequilapi/services" \
     -H 'Accept: application/json, text/plain, */*' -H 'Content-Type: application/json;charset=UTF-8' \

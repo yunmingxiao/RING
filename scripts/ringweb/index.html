@@ -9,6 +9,9 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
+<script src="https://unpkg.com/intro.js/minified/intro.min.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/intro.js/minified/introjs.min.css">
+
 <style>
 body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
 .w3-bar,h1,button {font-family: "Montserrat", sans-serif}
@@ -162,6 +165,23 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
       }
     }
   }
+
+  function BeginDemo() {
+    introJs().setOptions({
+      steps: [{
+        element: document.querySelector('#histogram-div'),
+        intro: 'The figure shows the bandwidth usages for each DVPN every minute for up to one day.'
+      },
+      {
+        element: document.querySelector('#access-setting-div'),
+        intro: 'Click the content(s) which you want to limit the DVPN users from using.'
+      },
+      {
+        element: document.querySelector('#submit-button'),
+        intro: 'Click Submit button to submit the setting changes.'
+      }]  
+    }).start();
+  }
 </script>
 
 <body onload="MenuSelect();GenerateSettings();ChartDraw()">
@@ -176,6 +196,7 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
     <a href="sentinel" class="menu-unselect" id="a-sentinel">Sentinel</a>
     <a href="tachyon" class="menu-unselect" id="a-tachyon">Tachyon</a>
     <a href="agreement" class="menu-unselect" id="a-agreement">Agreement</a>
+    <a onclick="BeginDemo()" class="menu-unselect" id="a-tutorial">Help</a>
     <!-- <a href="tachyon" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Tachyon</a> -->
   </div>
 </div>
@@ -188,7 +209,7 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
 </header> -->
 
 <!-- First Grid -->
-<div class="w3-row-padding w3-padding-64 w3-container">
+<div class="w3-row-padding w3-padding-64 w3-container" id="histogram-div">
   <div class="w3-content">
     <div id="chartContainer" style="height: 500px; width: 80%; margin-left: 10%;"></div>
     <!-- <div class="w3-third w3-center">
@@ -198,7 +219,7 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
 </div>
 
 <!-- Second Grid -->
-<div class="w3-row-padding w3-light-grey w3-padding-64 w3-container">
+<div class="w3-row-padding w3-light-grey w3-padding-64 w3-container" id="access-setting-div">
   <div class="w3-content">
     <h2 class="w3-col w3-center"> Access Settings </h2>
     <div class="w3-col"><p style="visibility:hidden">padding</p></div>
@@ -242,7 +263,7 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
     </div>
 
     <div class="w3-center" style="padding-top: 32px">
-      <button onclick="SubmitSettings()">Submit</button>
+      <button onclick="SubmitSettings()" id="submit-button">Submit</button>
     </div>
   </div>
 </div>
@@ -250,7 +271,7 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
 <div class="w3-container w3-black w3-center w3-opacity w3-padding-64">
     <h1 class="w3-margin w3-xlarge">Contact Us</h1>
     <h5 class="w3-padding">
-      <i class="material-icons">email</i><a href="mailto:safekodi.team@gmail.com">RING Team
+      <i class="material-icons">email</i><a href="mailto:ringdvpn@gmail.com">RING Team
     </a></h5>
 </div>
 

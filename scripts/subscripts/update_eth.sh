@@ -18,18 +18,27 @@ if [ $1 = 'mysterium' ]; then
     ip_myst=`cat ../conf/internal_myst.conf | cut -d'/' -f1`
     node_id=`sudo ls ${DIR_MYST}/keystore/ | grep UTC | cut -d'-' -f9`
 
+    password=`cat config/last.conf | python3 -c "import sys, json; print(json.load(sys.stdin)['dvpns']['mysterium']['password'])"`
     curl "http://${ip_myst}:4449/tequilapi/auth/login" \
     -H 'Accept: application/json, text/plain, */*' -H 'Content-Type: application/json;charset=UTF-8' \
-    --data-binary '{"username":"myst","password":"mystberry"}' \
+    --data-binary "{\"username\":\"myst\",\"password\":\"${password}\"}" \
     -c tmp/cookie_myst.txt
 
-    curl "http://${ip_myst}:4449/tequilapi/identities/0x${node_id}/payout" \
-    -X 'PUT' \
+    # curl "http://${ip_myst}:4449/tequilapi/identities/0x${node_id}/payout" \
+    # -X 'PUT' \
+    # -H 'Accept: application/json, text/plain, */*' -H 'Content-Type: application/json;charset=UTF-8' \
+    # -H "Origin: http://${ip_myst}:4449" \
+    # -H "Referer: http://${ip_myst}:4449/" \
+    # -b tmp/cookie_myst.txt \
+    # --data-binary "{\"eth_address\":\"${eth_addr}\"}"
+
+    curl "http://${ip_myst}:4449/tequilapi/identities/0x${node_id}/beneficiary" \
+    -X 'POST' \
     -H 'Accept: application/json, text/plain, */*' -H 'Content-Type: application/json;charset=UTF-8' \
     -H "Origin: http://${ip_myst}:4449" \
     -H "Referer: http://${ip_myst}:4449/" \
     -b tmp/cookie_myst.txt \
-    --data-binary "{\"eth_address\":\"${eth_addr}\"}"
+    --data-binary "{\"provider_id\":\"0x${node_id}\", \"beneficiary\":\"${eth_addr}\"}"
 
 elif [ $1 == 'sentinel' ]; then
     DIR_SENT="$HOME/sentinel"

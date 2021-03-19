@@ -9,8 +9,8 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.32.0/codemirror.min.js"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.32.0/codemirror.min.css" /> -->
+<script src="https://unpkg.com/intro.js/minified/intro.min.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/intro.js/minified/introjs.min.css">
 
 <style>
 body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
@@ -115,20 +115,77 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
     });
   }
 
+  var initiated = false;
+  function WidgetControl() {
+    if (document.URL.includes("mysterium")) {
+      if (initiated) {
+        document.getElementById('p-initiate-myst').style.display = "none";
+        document.getElementById('p-goto-myst').style.display = "inline";
+        document.getElementById('eth-address-div').style.display = "inline";
+        document.getElementById('password-div').style.display = "inline";
+        document.getElementById('data-plan-div').style.display = "inline";
+        document.getElementById('bdw-limit-div').style.display = "inline";
+        document.getElementById('eth-address-div').style.display = "inline";
+        document.getElementById('price-div').style.display = "inline";
+        document.getElementById('submit-div').style.display = "block";
+      } else {
+        document.getElementById('p-initiate-myst').style.display = "inline";
+        document.getElementById('p-goto-myst').style.display = "none";
+        document.getElementById('eth-address-div').style.display = "none";
+        document.getElementById('password-div').style.display = "none";
+        document.getElementById('data-plan-div').style.display = "none";
+        document.getElementById('bdw-limit-div').style.display = "none";
+        document.getElementById('eth-address-div').style.display = "none";
+        document.getElementById('price-div').style.display = "none";
+        document.getElementById('submit-div').style.display = "none";
+      }
+      document.getElementById('price-unit-div').innerHTML = "MYST / GB";
+      document.getElementById('tachyon-key-div').style.display = "none";
+    } else if (document.URL.includes("sentinel")) {
+      // document.getElementById('eth-address-div').style.display = "none";
+      document.getElementById('myst-interface-div').style.display = "none";
+      document.getElementById('password-div').style.display = "none";
+      // document.getElementById('data-plan-div').style.display = "none";
+      // document.getElementById('bdw-limit-div').style.display = "none";
+      // document.getElementById('eth-address-div').style.display = "none";
+      // document.getElementById('price-div').style.display = "none";
+      document.getElementById('price-unit-div').innerHTML = "SENT / GB";
+      document.getElementById('tachyon-key-div').style.display = "none";
+    } else if (document.URL.includes("tachyon")) {
+      document.getElementById('eth-address-div').style.display = "none";
+      document.getElementById('myst-interface-div').style.display = "none";
+      document.getElementById('password-div').style.display = "none";
+      // document.getElementById('data-plan-div').style.display = "none";
+      // document.getElementById('bdw-limit-div').style.display = "none";
+      document.getElementById('eth-address-div').style.display = "none";
+      document.getElementById('price-div').style.display = "none";
+      document.getElementById('price-unit-div').innerHTML = "IPX / GB";
+      $.ajax({
+        type : "GET",
+        url : document.URL + "_key.txt",
+        dataType: "text",
+        success: function(data) {
+          document.getElementById('tachyon-key').value = data;
+        }
+      });
+    }
+  }
+
   function SubmitDVPN() {
     submission = JSON.stringify({
        "eth-address": document.getElementById("eth-address").value,
        "data-plan": document.getElementById("data-plan").value,
        "bandwidth-limit": document.getElementById("bandwidth-limit").value,
-       "auto-bandwidth": document.getElementById("auto-bandwidth").checked,
+       //"auto-bandwidth": document.getElementById("auto-bandwidth").checked,
        "price-setting": document.getElementById("price-setting").value,
        "auto-price": document.getElementById("auto-price").checked,
-       "custom-bandwidth-policy": document.getElementById("custom-bandwidth-policy").checked,
+       //"custom-bandwidth-policy": document.getElementById("custom-bandwidth-policy").checked,
        "custom-price-policy": document.getElementById("custom-price-policy").checked,
+       "password": document.getElementById("password").value,
     });
     var note = "Click OK to confirm submitting the settings";
     if (document.URL.includes("sentinel")) {
-      note = note + "\n(The change for ETH address will only take effect after restart Sentinel)"
+      note = note + "\n(The change for ETH address will only take effect after restart Sentinel)";
     }
     var cf = confirm(note);
     if (!cf) {
@@ -171,6 +228,9 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
                 used += (data[key]).toFixed(2) + " B";
               document.getElementById(key).innerHTML = used;
             }
+            else if (key == "initiated") {
+              initiated = data[key];
+            }
             else {
               document.getElementById(key).value = data[key];
             }
@@ -179,12 +239,15 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
             alert(err);
           }
         }
-      }
+      },
+    complete: function() {
+      WidgetControl();
+    },
     });
   };
 
   function Action(action) {
-    if (action != "running-status") {
+    if (action != "running-status" && action != "initiate") {
       var cf = confirm("Click OK to confirm " + action +  "ing this VPN");
       if (!cf) {
         return;
@@ -217,17 +280,156 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
     });
   }
 
+  function InitMyst() {
+    var url = document.URL.split(":45679")[0];
+    initiated = true;
+    Action("initiate");
+    UpdateStatus();
+    window.open(url + ":4449", "_blank");
+  }
+
   function MenuSelect() {
     var menus = document.URL.split("/");
     var current_menu = "a-" + menus[menus.length - 1];
     document.getElementById(current_menu).className = "menu-selected";
   }
+
+  function BeginDemo() {
+    if (document.URL.includes("mysterium")) {
+      if (initiated) {
+        introJs().setOptions({
+          steps: [{
+            element: document.querySelector('#running-status-div'),
+            intro: 'This part shows whether the DVPN is running, and you can start, terminate, or restart the DVPN. '
+          },
+          {
+            element: document.querySelector('#myst-interface-div'),
+            intro: 'While RING provides convinient control over the DVPN, you can go to the Mysterium interface for further information.'
+          },
+          {
+            element: document.querySelector('#eth-address'),
+            intro: 'Enter the ETH address where you would like to receive the income.'
+          },
+          {
+            element: document.querySelector('#password-div'),
+            intro: 'Enter the password you set during the initilization.'
+          },
+          {
+            element: document.querySelector('#data-plan'),
+            intro: 'Enter the maximum amount of data Mysterium can consume.'
+          },
+          {
+            element: document.querySelector('#used-data'),
+            intro: 'Here it displays how much data are consumed so far in this month.'
+          },
+          {
+            element: document.querySelector('#bandwidth-limit'),
+            intro: 'Enter the maximum bandwidth limit.'
+          },
+          {
+            element: document.querySelector('#price'),
+            intro: 'Enter the price setting. For Mysterium, the price per minute will be this number divided by 1000 (MYST / min).'
+          },
+          {
+            element: document.querySelector('#auto-price-div'),
+            intro: 'If this is checked, we will maximize your income by adjusting the data cap and bandwidth limit based on our policy or your custom policy (if the right box is checked as well).'
+          },
+          {
+            element: document.querySelector('#custom-price-policy-div'),
+            intro: 'If this and the "Auto Control" button are checked, you will be able to control the DVPNs based on your custom policy, which can be changed clicking the Custom button.'
+          },
+          {
+            element: document.querySelector('#submit-div'),
+            intro: 'Click Submit button to submit the setting changes.'
+          }]  
+        }).start();
+      } else {
+        introJs().setOptions({
+          steps: [{
+            element: document.querySelector('#running-status-div'),
+            intro: 'This part shows whether the DVPN is running, and you can start, terminate, or restart the DVPN. Please start the DVPN to proceed.'
+          },
+          {
+            element: document.querySelector('#myst-interface-div'),
+            intro: 'The Mysterium is not initilized. Please click the button and go to Mysterium interface for initilization.'
+          }]
+        }).start();
+      }
+    } else if (document.URL.includes("sentinel")) {
+      introJs().setOptions({
+          steps: [{
+            element: document.querySelector('#running-status-div'),
+            intro: 'This part shows whether the DVPN is running, and you can start, terminate, or restart the DVPN. '
+          },
+          {
+            element: document.querySelector('#eth-address'),
+            intro: 'Enter the ETH address where you would like to receive the income.'
+          },
+          {
+            element: document.querySelector('#data-plan'),
+            intro: 'Enter the maximum amount of data Mysterium can consume.'
+          },
+          {
+            element: document.querySelector('#used-data'),
+            intro: 'Here it displays how much data are consumed so far in this month.'
+          },
+          {
+            element: document.querySelector('#bandwidth-limit'),
+            intro: 'Enter the maximum bandwidth limit.'
+          },
+          {
+            element: document.querySelector('#price'),
+            intro: 'Enter the price setting.'
+          },
+          {
+            element: document.querySelector('#auto-price-div'),
+            intro: 'If this is checked, we will maximize your income by adjusting the data cap and bandwidth limit for all the DVPNs based on our policy or your custom policy (if the right box is checked as well).'
+          },
+          {
+            element: document.querySelector('#custom-price-policy-div'),
+            intro: 'If this and the "Auto Control" button are checked, you will be able to control the DVPNs based on your custom policy, which can be changed clicking the Custom button.'
+          },
+          {
+            element: document.querySelector('#submit-div'),
+            intro: 'Click Submit button to submit the setting changes.'
+          }]
+        }).start();
+    } else if (document.URL.includes("tachyon")) {
+      introJs().setOptions({
+        steps: [{
+          element: document.querySelector('#running-status-div'),
+          intro: 'This part shows whether the DVPN is running, and you can start, terminate, or restart the DVPN. '
+        },
+        {
+          element: document.querySelector('#tachyon-key'),
+          intro: 'You will need this keystring when tracking this node on your Tachyon Node Manager.'
+        },
+        {
+          element: document.querySelector('#data-plan'),
+          intro: 'Enter the maximum amount of data Mysterium can consume.'
+        },
+        {
+          element: document.querySelector('#used-data'),
+          intro: 'Here it displays how much data are consumed so far in this month.'
+        },
+        {
+          element: document.querySelector('#bandwidth-limit'),
+          intro: 'Enter the maximum bandwidth limit.'
+        },
+        {
+          element: document.querySelector('#submit-div'),
+          intro: 'Click Submit button to submit the setting changes.'
+        }]
+      }).start();
+    }
+  }
+
 </script>
 
 <body onload="MenuSelect();UpdateStatus();Action('running-status');GetCustomError();GetCustomCode()">
 
 <!-- Navbar -->
-<div class="w3-top">
+<div class="w3-top" id="menu-div">
   <div class="w3-bar w3-grey w3-card w3-left-align w3-large">
     <a class="w3-bar-item w3-button w3-hide-medium w3-hide-large w3-right w3-padding-large w3-hover-white w3-large w3-grey" href="javascript:void(0);" onclick="myFunction()" title="Toggle Navigation Menu"><i class="fa fa-bars"></i></a>
     <a href="index" class="menu-unselect" id="a-index">Overall</a>
@@ -236,6 +438,7 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
     <a href="sentinel" class="menu-unselect" id="a-sentinel">Sentinel</a>
     <a href="tachyon" class="menu-unselect" id="a-tachyon">Tachyon</a>
     <a href="agreement" class="menu-unselect" id="a-agreement">Agreement</a>
+    <a onclick="BeginDemo()" class="menu-unselect" id="a-tutorial">Help</a>
     <!-- <a href="tachyon" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Tachyon</a> -->
   </div>
 </div>
@@ -252,22 +455,58 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
   <div class="w3-content">
     <div class="w3-col w3-padding"><p style="visibility:hidden">padding</p></div>
 
-    <div class="w3-center">
+    <div class="w3-center" id="running-status-div">
       <p class="w3-large"><span>Running Status: </span> <span style="color: green" id="running-status"></span> </p> 
       <button onclick="Action('start')">Start</button>
       <button onclick="Action('terminate')">Terminate</button>
       <button onclick="Action('restart')">Restart</button>
     </div>
 
-    <div class="w3-center w3-row w3-section" style="padding-top: 8px">
+    <div class="w3-center w3-row w3-section" style="padding-top: 8px" id="myst-interface-div">
       <div class="w3-col s3 w3-center w3-white"><p style="visibility:hidden">padding</p></div>
-      <div class="w3-col s2" style="padding-top: 8px">ETH Address: </div>
+      <div class="w3-col s4" id="p-initiate-myst">
+          <div class="w3-col s8 w3-left">
+            <p>Plase initiate Mysterium first:</p>
+          </div>
+          <div class="w3-col s4">
+            <button id="initiate-myst" onclick="InitMyst()" style="margin-top: 1em">Initiate</button>
+          </div>
+      </div>  
+      <div class="w3-col s4" id="p-goto-myst">
+        <div class="w3-col s8 w3-left">
+          <p>Go to Mysterium Interface:</p>
+        </div>
+        <div class="w3-col s4">
+          <button id="goto-myst" onclick="InitMyst()" style="margin-top: 1em">Mysterium</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="w3-center w3-row w3-section" style="padding-top: 8px" id="eth-address-div">
+      <div class="w3-col s3 w3-center w3-white"><p style="visibility:hidden">padding</p></div>
+      <div class="w3-col s2" style="padding-top: 8px"><p>ETH Address: </p></div>
       <div class="w3-col s4">
         <input class="w3-input" type="text" placeholder="0xfff..." id="eth-address">
       </div>  
     </div>
 
-    <div class="w3-center w3-row w3-section" style="padding-top: 8px">
+    <div class="w3-center w3-row w3-section" style="padding-top: 8px" id="tachyon-key-div">
+      <div class="w3-col s3 w3-center w3-white"><p style="visibility:hidden">padding</p></div>
+      <div class="w3-col s2" style="padding-top: 8px">Key String: </div>
+      <div class="w3-col s4">
+        <input class="w3-input" type="text" id="tachyon-key" value="" readonly>
+      </div>  
+    </div>
+
+    <div class="w3-center w3-row w3-section" style="padding-top: 8px" id="password-div">
+      <div class="w3-col s3 w3-center w3-white"><p style="visibility:hidden">padding</p></div>
+      <div class="w3-col s2" style="padding-top: 8px">Password: </div>
+      <div class="w3-col s4">
+        <input class="w3-input" type="text" placeholder="mystberry" id="password">
+      </div>  
+    </div>
+
+    <div class="w3-center w3-row w3-section" style="padding-top: 8px" id="data-plan-div">
       <div class="w3-col s3 w3-center w3-white"><p style="visibility:hidden">padding</p></div>
       <div class="w3-col s2" style="padding-top: 8px">Data Plan: </div>
       <div class="w3-col s1">
@@ -277,14 +516,14 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
       <div class="w3-col s2" style="padding-top: 8px; padding-left: 24px; text-align: left" id="used-data">Used: 0 B</div>
     </div>
 
-    <div class="w3-center w3-row w3-section" style="padding-top: 8px">
+    <div class="w3-center w3-row w3-section" style="padding-top: 8px" id="bdw-limit-div">
       <div class="w3-col s3 w3-center w3-white"><p style="visibility:hidden">padding</p></div>
       <div class="w3-col s2" style="padding-top: 8px">Bandwidth Limit: </div>
       <div class="w3-col s1">
         <input class="w3-input" type="number" step="any" placeholder="0" id="bandwidth-limit">
       </div>  
       <div class="w3-col s1" style="padding-top: 8px; padding-left: 8px; text-align: left">Mbps</div>
-      <div class="w3-col s2 w3-left">
+      <!-- <div class="w3-col s2 w3-left">
         <input class="w3-check" type="checkbox" checked="checked" id="auto-bandwidth">
         <label>Auto Control</label>
       </div>
@@ -292,21 +531,21 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
         <input class="w3-check" type="checkbox" checked="checked" id="custom-bandwidth-policy">
         <label><button onclick="Fold('policy-div')">Custom</button></label>
         <p id='error-warn1' style="visibility:hidden;color:orange"><a href="javascript:alert(custom_errors)">&#9888;</a></p>
-      </div>
+      </div> -->
     </div>
 
-    <div class="w3-center w3-row w3-section" style="padding-top: 8px">
+    <div class="w3-center w3-row w3-section" style="padding-top: 8px" id="price-div">
       <div class="w3-col s3 w3-center w3-white"><p style="visibility:hidden">padding</p></div>
       <div class="w3-col s2" style="padding-top: 8px">Price Setting: </div>
       <div class="w3-col s1">
         <input class="w3-input" type="number" step="0.00001" placeholder="0" id="price-setting">
       </div>  
-      <div class="w3-col s1" style="padding-top: 8px; padding-left: 8px; text-align: left">Myst / GB</div>
-      <div class="w3-col s2 w3-left">
+      <div class="w3-col s1" style="padding-top: 8px; padding-left: 8px; text-align: left" id="price-unit-div">Myst / GB</div>
+      <div class="w3-col s2 w3-left" id="auto-price-div">
         <input class="w3-check" type="checkbox" checked="checked" id="auto-price">
         <label>Auto Control</label>
       </div>
-      <div class="w3-col s2 w3-left">
+      <div class="w3-col s2 w3-left" id="custom-price-policy-div">
         <input class="w3-check" type="checkbox" checked="checked" id="custom-price-policy">
         <label><button onclick="Fold('policy-div')">Custom</button></label>
         <p id='error-warn2' style="visibility:hidden;color:orange"><a href="javascript:alert(custom_errors)">&#9888;</a></p>
@@ -326,7 +565,7 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
       </div>
     </div>
 
-    <div class="w3-center" style="padding-top: 16px">
+    <div class="w3-center" style="padding-top: 16px" id="submit-div">
       <button id="submit-dvpn" onclick="SubmitDVPN()">Submit</button>
     </div>
 
