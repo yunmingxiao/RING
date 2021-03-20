@@ -24,8 +24,11 @@ def new_custom_policy():
     policy_file_default = os.path.join(os.getcwd()+'/..', "policy", "default.py")
     policy_file_custom = os.path.join(os.getcwd()+'/..', "policy", "custom.py")
     code = ''
-    with open(policy_file_default, 'r') as fp:
-        code = fp.read()
+    try:
+        with open(policy_file_default, 'r') as fp:
+            code = fp.read()
+    except:
+        print("ERROR! new_custom_policy", 'read file error', policy_default)
     with open(policy_file_custom, 'w+') as fp:
         fp.write(code)
 
@@ -395,24 +398,27 @@ class DVPN():
         month_start = time.mktime(todayDate.replace(day=1).timetuple())
         last_used, CC = 0, 0
         # last_netlog_time = 0
-        with open(os.path.join(self.netlogger), "r+") as fp:
-            for line in fp:
-                try:
-                    his = json.loads(line)
-                    if (last_used == 0) or (his['time'] <= month_start):
-                        last_used = float(his['stats'][self.net_interface]["receive-bytes"]) + float(his['stats'][self.net_interface]["transmit-bytes"])
-                        # last_netlog_time = float(his['time'])
-                    else:
-                        current_used = float(his['stats'][self.net_interface]["receive-bytes"]) + float(his['stats'][self.net_interface]["transmit-bytes"])
-                        if (current_used >= last_used):
-                            CC += current_used - last_used
-                            last_used = current_used
+        try:
+            with open(os.path.join(self.netlogger), "r+") as fp:
+                for line in fp:
+                    try:
+                        his = json.loads(line)
+                        if (last_used == 0) or (his['time'] <= month_start):
+                            last_used = float(his['stats'][self.net_interface]["receive-bytes"]) + float(his['stats'][self.net_interface]["transmit-bytes"])
+                            # last_netlog_time = float(his['time'])
                         else:
-                            # there might be a reset of the network configure
-                            last_used = current_used
-                except:
-                    print('failed to read net log:', line)
-                    pass
+                            current_used = float(his['stats'][self.net_interface]["receive-bytes"]) + float(his['stats'][self.net_interface]["transmit-bytes"])
+                            if (current_used >= last_used):
+                                CC += current_used - last_used
+                                last_used = current_used
+                            else:
+                                # there might be a reset of the network configure
+                                last_used = current_used
+                    except:
+                        print('failed to read net log:', line)
+                        pass
+        except:
+            print("ERROR! update_used", 'read file error', self.netlogger)
         
         current_net = self.netstat.get_interfaces()
         current_used = float(current_net[self.net_interface]["receive-bytes"]) + float(current_net[self.net_interface]["transmit-bytes"])
@@ -846,8 +852,11 @@ class Controller():
     def get_policy(self):
         policy_file = os.path.join(self.path, "policy", "custom.py")
         code = ''
-        with open(policy_file, 'r') as fp:
-            code = fp.read()
+        try:
+            with open(policy_file, 'r') as fp:
+                code = fp.read()
+        except Exception as e:
+            print("ERROR! get_policy", 'read file error', policy_file)
         return code
 
     def update_policy(self, policy_code):
@@ -871,8 +880,11 @@ class Controller():
         policy_file_default = os.path.join(self.path, "policy", "default.py")
         policy_file_custom = os.path.join(self.path, "policy", "custom.py")
         code = ''
-        with open(policy_file_default, 'r') as fp:
-            code = fp.read()
+        try:
+            with open(policy_file_default, 'r') as fp:
+                code = fp.read()
+        except Exception as e:
+            print("ERROR! restore_default_policy", 'read file error', policy_file_default)
         with open(policy_file_custom, 'w+') as fp:
             fp.write(code)
             
