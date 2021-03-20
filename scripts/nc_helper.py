@@ -26,7 +26,7 @@ def new_custom_policy():
     code = ''
     with open(policy_file_default, 'r') as fp:
         code = fp.read()
-    with open(policy_file_custom, 'w') as fp:
+    with open(policy_file_custom, 'w+') as fp:
         fp.write(code)
 
 policy_exceptions = []
@@ -149,7 +149,7 @@ class Ifconfig():
         if len(self.history) > 1440:
             self.history = self.history[-1440:]
         try:
-            with open(self.recent_his, "w") as fp:
+            with open(self.recent_his, "w+") as fp:
                 json.dump(self.history, fp)
         except Exception as e:
             print('Ifconfig.add_history: save recent history failed', e)
@@ -731,7 +731,7 @@ class Controller():
         conf = {}
         conf['access_rules'] = self.access_rules
         conf['dvpns'] = {dvpn: self.dvpns[dvpn].generate_config() for dvpn in self.dvpns}
-        with open(os.path.join(self.path, "config", "last.conf"), "w") as fp:
+        with open(os.path.join(self.path, "config", "last.conf"), "w+") as fp:
             json.dump(conf, fp)
 
     def __del__(self):
@@ -873,7 +873,7 @@ class Controller():
         code = ''
         with open(policy_file_default, 'r') as fp:
             code = fp.read()
-        with open(policy_file_custom, 'w') as fp:
+        with open(policy_file_custom, 'w+') as fp:
             fp.write(code)
             
         global policy_exceptions
