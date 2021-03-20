@@ -46,7 +46,7 @@ elif [ $1 == 'sentinel' ]; then
     port_ctrl_sent=3000
     
     echo 'Update Sentinel Address'
-    echo "${eth_addr}" > eth_sentinel.conf
+    echo "${eth_addr}" > config/eth_sentinel.conf
     python3 update_config.py eth ${eth_addr}
     cp ../resources/sentinel/config.data ${DIR_SENT}/
 
