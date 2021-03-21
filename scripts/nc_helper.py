@@ -805,6 +805,9 @@ class Controller():
     # # config
     def update_vpn(self, vpn, configs, force=False, log=True):
         update = self.dvpns[vpn].update_config(configs, force)
+        if 'custom-price-policy' in configs:
+            for k in self.dvpns:
+                self.dvpns[k].update_config({'custom-price-policy': configs['custom-price-policy']})
         if 'auto-price' in configs:
             for k in self.dvpns:
                 self.dvpns[k].update_config({'auto-price': configs['auto-price']})
