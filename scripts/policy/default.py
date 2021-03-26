@@ -39,7 +39,7 @@ class Policy():
         if dvpn == 'mysterium':
             if self.prices[dvpn] < 0.99: # MAX is 1.0
                 self.price_decision[dvpn] = self.prices[dvpn] + 0.01
-        elif dvpn == 'mysterium':
+        elif dvpn == 'sentinel':
             if self.prices[dvpn] < 99: # MAX is 100
                 self.price_decision[dvpn] = self.prices[dvpn] + 1
         elif dvpn == 'tachyon':
@@ -51,7 +51,7 @@ class Policy():
         if dvpn == 'mysterium':
             if self.prices[dvpn] > 0.01: # MIN is 0.01
                 self.price_decision[dvpn] = self.prices[dvpn] - 0.01
-        elif dvpn == 'mysterium':
+        elif dvpn == 'sentinel':
             if self.prices[dvpn] > 1: # MIN is 1
                 self.price_decision[dvpn] = self.prices[dvpn] - 1
         elif dvpn == 'tachyon':
