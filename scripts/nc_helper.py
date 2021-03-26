@@ -40,8 +40,10 @@ except ModuleNotFoundError:
     try:
         import policy.custom as policy_custom_
     except Exception as e:
+        print(e)
         policy_exceptions.append(e)
 except Exception as e:
+    print(e)
     policy_exceptions.append(e)
 
 
@@ -575,6 +577,7 @@ class DVPN():
                         self.price_setting, prices_in_network, unit_price
                     )
                 except Exception as e:
+                    print(e)
                     policy_exceptions.append(e)
                     fail_flag = True
             # if (not (self.custom_bandwidth_policy or self.custom_price_policy) or fail_flag):
@@ -897,6 +900,7 @@ class Controller():
             policy_exceptions.clear()
             importlib.reload(policy_custom_) 
         except Exception as e:
+            print(e)
             policy_exceptions.append(e)
         return self.get_policy_errors()
 
