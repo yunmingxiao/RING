@@ -9,7 +9,7 @@ then
 fi
 
 # make sure there is enough space on the device
-MIN_SPACE=10
+MIN_SPACE=20
 free_space=`df | grep /$ | awk '{print $4/(1000*1000)}'`
 is_full=`echo "$free_space $MIN_SPACE" | awk '{if($1 <= $2) print "true"; else print "false";}'`
 if [ $is_full == "true" ]
@@ -109,6 +109,7 @@ sudo sh get-docker.sh
 # non-privilege set up
 sudo groupadd docker
 sudo usermod -aG docker $USER
+echo "Please re-run the start.sh script"
 newgrp docker
 fi
 

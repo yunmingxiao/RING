@@ -765,6 +765,7 @@ class Controller():
                 self.dvpns[dvpn].update_used()
                 self.dvpns[dvpn].update_auto_control()
                 self.log_operation('Controller.log_netstat: ' + dvpn + ' ' + str(json.dumps(self.dvpns[dvpn].generate_config())))
+                self.save()
                 # self.dvpns[dvpn].update_auto_bandwidth()
                 # self.dvpns[dvpn].update_auto_price()
 
