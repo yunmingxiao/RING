@@ -4,6 +4,8 @@ import statistics
 import json
 import os
 
+UPDATE_INTERVAL = 3600
+
 class Policy():
     def __init__(self, path, dvpns={}):
         print('Policy.init', path, dvpns)
@@ -37,13 +39,13 @@ class Policy():
     def increase_price(self, dvpn):
         print('Policy.increase_price', dvpn)
         if dvpn == 'mysterium':
-            if self.prices[dvpn] < 0.99: # MAX is 1.0
+            if self.prices[dvpn] < 0.99 and self.bandwidth_decision[dvpn] > 1: # MAX is 1.0
                 self.price_decision[dvpn] = self.prices[dvpn] + 0.01
         elif dvpn == 'sentinel':
-            if self.prices[dvpn] < 99: # MAX is 100
+            if self.prices[dvpn] < 99 and self.bandwidth_decision[dvpn] > 1: # MAX is 100
                 self.price_decision[dvpn] = self.prices[dvpn] + 1
         elif dvpn == 'tachyon':
-            if self.prices[dvpn] < 0.99: # MAX is 100
+            if self.prices[dvpn] < 0.99 and self.bandwidth_decision[dvpn] > 1: # MAX is 100
                 self.price_decision[dvpn] = self.prices[dvpn] + 0.01
 
     def decrease_price(self, dvpn):
@@ -131,7 +133,7 @@ class Policy():
             self.dvpns[dvpn].update_config({'data-plan': self.data_caps[dvpn]})
 
             # adjust price setting
-            bdw_need = self.LC[dvpn] * time_left
+            bdw_need = self.LC[dvpn] * time_left / UPDATE_INTERVAL
             diff = bdw_need + self.CC[dvpn] - self.LC[dvpn] - self.data_caps[dvpn]
             if diff > self.needs_diff_thres:
                 #self.price_decision[dvpn] = self.prices[dvpn] * 1.1
