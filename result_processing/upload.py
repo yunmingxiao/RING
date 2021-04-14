@@ -17,9 +17,9 @@ upload_file('../scripts/config/', 'netstat.log')
 upload_file('../scripts/config/', 'operation.log')
 upload_file('../scripts/config/', 'default_result.json')
         
-upload_file('%s/filters/' % (Constants.TARGET_DIR), 'mcafee_category.json')
-upload_file('%s/filters/' % (Constants.TARGET_DIR), 'mcafee_security.json')
+#upload_file('%s/filters/' % (Constants.TARGET_DIR), 'mcafee_category.json')
+#upload_file('%s/filters/' % (Constants.TARGET_DIR), 'mcafee_security.json')
 
-for vpn in Constants.DVPNs:
-    upload_file('%s/jsons/' % (Constants.TARGET_DIR), 'requests_%s.json' % (vpn))
-    upload_file('%s/jsons/' % (Constants.TARGET_DIR), 'vpn_conns_%s.json' % (vpn))
+#for vpn in Constants.DVPNs:
+#    upload_file('%s/jsons/' % (Constants.TARGET_DIR), 'requests_%s.json' % (vpn))
+#    upload_file('%s/jsons/' % (Constants.TARGET_DIR), 'vpn_conns_%s.json' % (vpn))

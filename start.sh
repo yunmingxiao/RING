@@ -13,7 +13,7 @@ cd scripts
 source install.sh
 source create_net.sh
 source stop_record.sh
-source record.sh
+#source record.sh
 
 cd ringweb
 source restart.sh &
