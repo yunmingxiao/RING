@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 # please run this script at parent directory
 
 cur_dir=`pwd`

@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 # please run this script at parent directory
 
 cur_dir=`pwd`
@@ -16,8 +16,9 @@ source stop_record.sh
 #source record.sh
 
 cd ringweb
-source restart.sh &
+source restart.sh > start.log &
 cd ${cur_dir}
 
 source control/upnp.sh 2>&1 &
 source control/result_processing.sh &
+echo "RING started successfully!"

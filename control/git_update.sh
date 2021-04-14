@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 
 # parameters 
 TIMEOUT=3600   # restart each N hours 
