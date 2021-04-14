@@ -80,10 +80,20 @@ elif [ $1 == 'sentinel' ]; then
     DIR_SENT="$HOME/sentinel"
     port_ovpn_sent=1194
     port_ctrl_sent=3000
+    arch=`uname -m`
     
     echo 'Update Sentinel Address'
     python3 update_config.py price ${price}
     cp ../resources/sentinel/config.data ${DIR_SENT}/
+
+    docker stop $1
+    docker run -d --rm \
+    -p ${port_ctrl_sent}:${port_ctrl_sent} -p ${port_ovpn_sent}:${port_ovpn_sent}/udp \
+    --network=net-sentinel \
+    --name sentinel \
+    --privileged \
+    --mount type=bind,source=${DIR_SENT},target=/root/.sentinel \
+    xiaoyunming/sentinel:${arch}
 
 elif [ $1 == 'tachyon' ]; then
     echo 'Unsupported Action'

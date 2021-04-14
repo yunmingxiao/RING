@@ -108,7 +108,7 @@ except Exception as e:
 #     policy_exceptions['tachyon'].append(e)
 
 
-SAVE_INTERVAL = 30
+SAVE_INTERVAL = 60
 
 
 def bytes2str(s):
@@ -331,6 +331,7 @@ class DVPN():
         self.policy_custom = policy_custom_.Policy(path, {})
 
         self.status = "Inactive"
+        self.manual_status = "Inactive" # to avoid crash
         self.update_status()
         self.tc = TrafficControl([self.net_interface])
 
@@ -366,8 +367,10 @@ class DVPN():
         self.update_used()
         return self.status
 
-    def start(self):
-        print('DVPN.start')
+    def start(self, manual=False):
+        print('DVPN.start', manual)
+        if manual:
+            self.manual_status = 'Running'
         wd = os.getcwd()
         os.chdir(self.path)
         cmds = ['/bin/bash', 'subscripts/run_dvpn.sh', self.name]
@@ -380,8 +383,10 @@ class DVPN():
         p.kill()
         os.chdir(wd)
 
-    def terminate(self):
-        print('DVPN.terminate')
+    def terminate(self, manual=False):
+        print('DVPN.terminate', manual)
+        if manual:
+            self.manual_status = 'Inactive'
         exceed_plan = True
         wd = os.getcwd()
         os.chdir(self.path)
@@ -434,11 +439,17 @@ class DVPN():
 
         if (self.data_plan * 1000000000 <= self.used) and (self.status == "Running"):
             print('used exceeds data plan', self.data_plan * 1000000000, self.used)
-            self.terminate()
+            self.terminate(manual=True)
         elif (self.exceed_plan is True):
             print('data plan refreshed. Reboot the DVPN', self.data_plan * 1000000000, self.used)
-            self.start()
+            self.start(manual=True)
             self.exceed_plan = False
+
+        # prevent terminiated due to crash or other non-manual causes
+        if self.status == "Running" and self.manual_status != "Running":
+            self.start()
+        elif self.status == "Inactive" and self.manual_status != "Inactive":
+            self.terminate() # this is not likely to happen
 
     def generate_config(self):
         print('DVPN.generate_config')
@@ -716,7 +727,7 @@ class Controller():
         # print(cmds)
         # p = subprocess.Popen(cmds, stdout=subprocess.PIPE)
         # p.kill()
-        self.write_interval = SAVE_INTERVAL # write every 30 minutes
+        self.write_interval = SAVE_INTERVAL # write every 60 minutes
         self.log_netstat(5, 60) # collect every minute
 
         # set up dvpn rules following the last configuration
@@ -833,18 +844,18 @@ class Controller():
 
     def start(self, vpn, log=True):
         self.log_operation("Controller.start: " + vpn)
-        self.dvpns[vpn].start()
+        self.dvpns[vpn].start(manual=True)
         return self.dvpns[vpn].get_status()
 
     def terminate(self, vpn, log=True):
         self.log_operation("Controller.terminate: " + vpn)
-        self.dvpns[vpn].terminate()
+        self.dvpns[vpn].terminate(manual=True)
         return self.dvpns[vpn].get_status()
         
     def reboot(self, vpn, log=True):
         self.log_operation("Controller.start: " + vpn)
-        self.dvpns[vpn].terminate()
-        self.dvpns[vpn].start()
+        self.dvpns[vpn].terminate(manual=True)
+        self.dvpns[vpn].start(manual=True)
         return self.dvpns[vpn].get_status()
 
 
