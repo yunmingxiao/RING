@@ -331,8 +331,8 @@ class DVPN():
         self.policy_custom = policy_custom_.Policy(path, {})
 
         self.status = "Inactive"
-        self.manual_status = "Inactive" # to avoid crash
         self.update_status()
+        self.manual_status = self.status # to avoid crash
         self.tc = TrafficControl([self.net_interface])
 
         self.path = path
@@ -446,9 +446,9 @@ class DVPN():
             self.exceed_plan = False
 
         # prevent terminiated due to crash or other non-manual causes
-        if self.status == "Running" and self.manual_status != "Running":
+        if self.manual_status == "Running" and self.status != "Running":
             self.start()
-        elif self.status == "Inactive" and self.manual_status != "Inactive":
+        elif self.manual_status == "Inactive" and self.status != "Inactive":
             self.terminate() # this is not likely to happen
 
     def generate_config(self):
