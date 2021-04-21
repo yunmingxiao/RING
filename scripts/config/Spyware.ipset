@@ -1,11 +1,18 @@
 create Spyware hash:net family inet hashsize 1024 maxelem 65536
-add Spyware 172.67.209.179
-add Spyware 108.166.191.99
-add Spyware 192.243.59.12
-add Spyware 46.40.125.240
 add Spyware 192.243.59.13
-add Spyware 178.62.59.165
+add Spyware 178.128.141.43
+add Spyware 159.138.48.43
+add Spyware 159.138.5.148
+add Spyware 172.67.209.179
+add Spyware 139.45.197.170
+add Spyware 46.40.125.240
+add Spyware 192.243.59.12
+add Spyware 139.45.197.150
+add Spyware 104.26.15.133
+add Spyware 104.26.14.133
 add Spyware 216.239.32.21
 add Spyware 46.105.57.148
-add Spyware 139.45.197.170
-add Spyware 104.26.15.133
+add Spyware 159.138.32.61
+add Spyware 178.62.59.165
+add Spyware 108.166.191.99
+add Spyware 192.243.59.20
