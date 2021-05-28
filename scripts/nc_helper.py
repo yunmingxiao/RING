@@ -916,6 +916,25 @@ class Controller():
             policy_exceptions.append(e)
         return self.get_policy_errors()
 
+    def update_schedule(self, schedule):
+        self.log_operation('Controller.update_schedule: ' + ">>>>" 
+                            + ",".join(schedule) + "<<<<")
+        schedule_file = os.path.join(self.path, "schedule", "custom.py")
+        with open(schedule_file, 'w') as fp:
+            fp.write(schedule)
+
+        return True
+
+    def get_schedule(self):
+        schedule_file = os.path.join(self.path, "schedule", "custom.py")
+        schedule = ''
+        try:
+            with open(schedule_file, 'r') as fp:
+                schedule = fp.read()
+        except Exception as e:
+            print("ERROR! get_policy", 'read file error', schedule_file)
+        return schedule
+
 
     # default config
     def default_config(self):

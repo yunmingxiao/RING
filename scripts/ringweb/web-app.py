@@ -94,6 +94,8 @@ class RingWebService(object):
                 return self.controller.get_policy_errors()
             elif params['action'] == 'code':
                 return self.controller.get_policy()
+            elif params['action'] == 'schedule':
+                return self.controller.get_schedule()
             elif params['action'] == 'restore_default':
                 return self.controller.restore_default_policy()
             elif params['action'] == 'initiate':
@@ -143,6 +145,8 @@ class RingWebService(object):
 
         elif ('-custom-code' in url_splits[-1]):
             self.controller.update_policy(body['code'])
+        elif ('-custom-schedule' in url_splits[-1]):
+            self.controller.update_schedule(body['schedule'])
         
         else:
             cherrypy.response.status = 404

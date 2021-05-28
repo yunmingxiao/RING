@@ -20,6 +20,8 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
 .menu-unselect {float:left;width:auto;border:none;display:block;outline:0;white-space:normal;padding:12px 24px;text-decoration:none}
 .menu-unselect:hover{color:#000!important;background-color:#fff!important}
 .menu-selected {float:left;width:auto;border:none;display:block;outline:0;white-space:normal;padding:12px 24px;text-decoration:none;color:#000!important;background-color:#fff!important}
+.custom_mbps {border: 1px black solid; display:inline-block; vertical-align: top;}
+.custom_time {font-size: 8pt; padding: 0px; margin: 0px; height: 35px}
 </style>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
 <script>
@@ -112,6 +114,48 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
       dataType: "text",
       success: function(data) {
         document.getElementById('policy-code').value = data;
+      }
+    });
+  }
+
+  function SubmitCustomBandwidth() {
+    var note = "Click OK to confirm submitting the custom bandwidth schedule\n(Note: You need to click both \"Auto Control\" and \"Custom\" buttons to apply the custom schedule)";
+    var cf = confirm(note);
+    if (!cf) {
+      return;
+    }
+    schedule = []
+    for (element of document.getElementsByClassName('custom_mbps')) {
+      console.log(element.value)
+      schedule.push(element.value)
+    }
+    submission = JSON.stringify({
+      "schedule": schedule
+    })
+    $.ajax({
+        type: "POST",
+        url: document.URL+'-custom-schedule/',
+        contentType: "application/json",
+        dataType: "json",
+        data: submission,
+        success: function() {alert("Submitted!");},
+        error: function(){ alert('Submitted!');},
+    });
+    GetCustomError();
+    console.log(submission)
+  }
+
+  function GetCustomSchedule() {
+    $.ajax({
+      type : "GET",
+      url : document.URL,
+      data: {"action": "code"},
+      dataType: "text",
+      success: function(data) {
+        data = []
+        for (element of document.getElementsByClassName('custom_mbps')) {
+          data.push(element.value)
+        }
       }
     });
   }
@@ -427,7 +471,7 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
 
 </script>
 
-<body onload="MenuSelect();UpdateStatus();Action('running-status');GetCustomError();GetCustomCode()">
+<body onload="MenuSelect();UpdateStatus();Action('running-status');GetCustomError();GetCustomCode();GetCustomSchedule">
 
 <!-- Navbar -->
 <div class="w3-top" id="menu-div">
@@ -524,15 +568,77 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
         <input class="w3-input" type="number" step="any" placeholder="0" id="bandwidth-limit">
       </div>  
       <div class="w3-col s1" style="padding-top: 8px; padding-left: 8px; text-align: left">Mbps</div>
-      <!-- <div class="w3-col s2 w3-left">
+      <div class="w3-col s2 w3-left">
         <input class="w3-check" type="checkbox" checked="checked" id="auto-bandwidth">
         <label>Auto Control</label>
       </div>
       <div class="w3-col s2 w3-left">
         <input class="w3-check" type="checkbox" checked="checked" id="custom-bandwidth-policy">
-        <label><button onclick="Fold('policy-div')">Custom</button></label>
+        <label><button onclick="Fold('bandwidth-div')">Custom</button></label>
         <p id='error-warn1' style="visibility:hidden;color:orange"><a href="javascript:alert(custom_errors)">&#9888;</a></p>
-      </div> -->
+      </div>
+    </div>
+
+    <div class="w3-center w3-row w3-section" style="display:none" id="bandwidth-div">
+      <div class="w3-col s3 w3-center w3-white"><p style="visibility:hidden">padding</p></div>
+      <div class="w3-col s2" style="padding-top: 8px; width: 40px">
+        <p class="custom_time">00:00</p>
+        <p class="custom_time">01:00</p>
+        <p class="custom_time">02:00</p>
+        <p class="custom_time">03:00</p>
+        <p class="custom_time">04:00</p>
+        <p class="custom_time">05:00</p>
+        <p class="custom_time">06:00</p>
+        <p class="custom_time">07:00</p>
+        <p class="custom_time">08:00</p>
+        <p class="custom_time">09:00</p>
+        <p class="custom_time">10:00</p>
+        <p class="custom_time">11:00</p>
+        <p class="custom_time">12:00</p>
+        <p class="custom_time">13:00</p>
+        <p class="custom_time">14:00</p>
+        <p class="custom_time">15:00</p>
+        <p class="custom_time">16:00</p>
+        <p class="custom_time">17:00</p>
+        <p class="custom_time">18:00</p>
+        <p class="custom_time">19:00</p>
+        <p class="custom_time">20:00</p>
+        <p class="custom_time">21:00</p>
+        <p class="custom_time">22:00</p>
+        <p class="custom_time">23:00</p>
+        <p class="custom_time">24:00</p>
+      </div>
+      <div class="w3-col s2 w3-left" style="padding-top: 17px; padding-right: 150px">
+        <input class="custom_mbps" type="number" style="height: 35px; width: 80px" step="any" value="0" id="custom-bandwidth-limit">
+        <input class="custom_mbps" type="number" style="height: 35px; width: 80px" step="any" value="0" id="custom-bandwidth-limit">
+        <input class="custom_mbps" type="number" style="height: 35px; width: 80px" step="any" value="0" id="custom-bandwidth-limit">
+        <input class="custom_mbps" type="number" style="height: 35px; width: 80px" step="any" value="0" id="custom-bandwidth-limit">
+        <input class="custom_mbps" type="number" style="height: 35px; width: 80px" step="any" value="0" id="custom-bandwidth-limit">
+        <input class="custom_mbps" type="number" style="height: 35px; width: 80px" step="any" value="0" id="custom-bandwidth-limit">
+        <input class="custom_mbps" type="number" style="height: 35px; width: 80px" step="any" value="0" id="custom-bandwidth-limit">
+        <input class="custom_mbps" type="number" style="height: 35px; width: 80px" step="any" value="0" id="custom-bandwidth-limit">
+        <input class="custom_mbps" type="number" style="height: 35px; width: 80px" step="any" value="0" id="custom-bandwidth-limit">
+        <input class="custom_mbps" type="number" style="height: 35px; width: 80px" step="any" value="0" id="custom-bandwidth-limit">
+        <input class="custom_mbps" type="number" style="height: 35px; width: 80px" step="any" value="0" id="custom-bandwidth-limit">
+        <input class="custom_mbps" type="number" style="height: 35px; width: 80px" step="any" value="0" id="custom-bandwidth-limit">
+        <input class="custom_mbps" type="number" style="height: 35px; width: 80px" step="any" value="0" id="custom-bandwidth-limit">
+        <input class="custom_mbps" type="number" style="height: 35px; width: 80px" step="any" value="0" id="custom-bandwidth-limit">
+        <input class="custom_mbps" type="number" style="height: 35px; width: 80px" step="any" value="0" id="custom-bandwidth-limit">
+        <input class="custom_mbps" type="number" style="height: 35px; width: 80px" step="any" value="0" id="custom-bandwidth-limit">
+        <input class="custom_mbps" type="number" style="height: 35px; width: 80px" step="any" value="0" id="custom-bandwidth-limit">
+        <input class="custom_mbps" type="number" style="height: 35px; width: 80px" step="any" value="0" id="custom-bandwidth-limit">
+        <input class="custom_mbps" type="number" style="height: 35px; width: 80px" step="any" value="0" id="custom-bandwidth-limit">
+        <input class="custom_mbps" type="number" style="height: 35px; width: 80px" step="any" value="0" id="custom-bandwidth-limit">
+        <input class="custom_mbps" type="number" style="height: 35px; width: 80px" step="any" value="0" id="custom-bandwidth-limit">
+        <input class="custom_mbps" type="number" style="height: 35px; width: 80px" step="any" value="0" id="custom-bandwidth-limit">
+        <input class="custom_mbps" type="number" style="height: 35px; width: 80px" step="any" value="0" id="custom-bandwidth-limit">
+        <input class="custom_mbps" type="number" style="height: 35px; width: 80px" step="any" value="0" id="custom-bandwidth-limit">
+      </div>
+      <div class="w3-col s3 w3-left">
+        <p>Custom Bandwidth Schedule:</p>
+        <button id="submit-dvpn" onclick="SubmitCustomBandwidth()">Submit</button>
+        <button id="submit-dvpn" onclick="Fold('bandwidth-div')">Hide</button>
+      </div>
     </div>
 
     <div class="w3-center w3-row w3-section" style="padding-top: 8px" id="price-div">
