@@ -1,0 +1,90 @@
+import time
+import json
+import os
+import math
+
+UPDATE_INTERVAL = 3600
+
+"""
+da dictionary of size 24
+
+json "schedule" : [0 for i in range(24)]
+"""
+
+class RingBearer():
+    def __init__(self, path, parameters = {}, dvpns={}):
+        print('Policy.init', path, dvpns)
+        self.path = path
+        self.dvpns = dvpns
+
+        day = time.localtime().tm_mday
+
+        self.bandwidth_decision = {d: 0 for d in dvpns}
+        self.has_updated_today = {d: day for d in range(24)}
+        
+        # assuming these params will come out of the front end as a json object
+        self.parameters = json.loads(parameters)["schedule"]
+
+        for i in self.parameters:
+            try:
+                i = int(i)
+            except:
+                raise TypeError()
+
+        # my other assumption is that the dictionary will map time : bandwidth limit,
+        # where "time" is the time at which we want to move TO that bandwidth limit.
+
+    def policy(self):
+        """
+        POLICY:
+
+        parameters: 
+        returns: none
+
+        the self.parameters should contain a dictionary mapping times to bandwidth caps. 
+        """
+        # for every time parameter
+
+        # closest = float("inf")
+        # c = 0
+
+        # for key, _ in self.parameters:
+        #     if key[0] == hour: # assuming key[0] will be the hour of the user-input time
+        #         euclidean = math.sqrt((minute - key[1])**2) # and key[1] will be minute
+        #         if euclidean < closest:
+        #             closest = euclidean
+        #             if (closest * 60 + key[2]) < UPDATE_INTERVAL: # if we're inside the update window, we have an operation to do
+        #                 c = key
+        #             else: # if we're outside the update window, it means it's too soon!
+        #                 return
+
+        # c is now the key of the next operation we need to do, because it's the closest by hours and minutes.
+
+        hour = time.localtime().tm_hour
+        day = time.localtime().tm_mday
+
+        if self.has_updated_today[hour] != day:
+            self.has_updated_today[hour] = day
+            bandwidth_cap = self.parameters[hour] / len(self.dvpns)
+            for dvpn in self.dvpns:
+                self.bandwidth_decision[dvpn] = bandwidth_cap
+            
+            self.save_change()
+
+    # borrowed from default policy
+    def reset(self, dvpn):
+        print('Policy.reset', dvpn)
+        self.CC[dvpn] = 0
+
+    # borrowed from default policy, changed slightly
+    def save_change(self):
+        print('Policy.save_change')
+        result = {}
+        for dvpn in self.dvpns:
+            result[dvpn]['bandwidth_decision'] = self.bandwidth_decision[dvpn]
+
+        print(result)
+
+        with open(os.path.join(self.path, "config", 'dynamic_result.json'), 'a+') as fp:
+            json.dump(result, fp)
+            fp.write('\n')
