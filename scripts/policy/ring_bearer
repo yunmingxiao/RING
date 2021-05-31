@@ -17,10 +17,10 @@ class RingBearer():
         self.path = path
         self.dvpns = dvpns
 
-        day = time.localtime().tm_mday
+        # day = time.localtime().tm_mday
 
         self.bandwidth_decision = {d: 0 for d in dvpns}
-        self.has_updated_today = {d: day for d in range(24)}
+        self.has_updated_today = [-1 for d in range(24)]
         
         # assuming these params will come out of the front end as a json object
         self.parameters = json.loads(parameters)["schedule"]
@@ -64,6 +64,7 @@ class RingBearer():
         day = time.localtime().tm_mday
 
         if self.has_updated_today[hour] != day:
+            print("Updating policy for hour ", hour)
             self.has_updated_today[hour] = day
             bandwidth_cap = self.parameters[hour] / len(self.dvpns)
             for dvpn in self.dvpns:
