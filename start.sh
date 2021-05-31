@@ -20,5 +20,5 @@ source restart.sh > start.log &
 cd ${cur_dir}
 
 source control/upnp.sh 2>&1 &
-source control/result_processing.sh &
+#source control/result_processing.sh &
 echo "RING started successfully!"
