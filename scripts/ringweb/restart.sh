@@ -13,6 +13,7 @@ mkdir -p logs
 is_running=`cat ".should_run"`
 old_pid=-1
 num_restart=0
+echo "Restart"
 while [ $is_running == "true" ] 
 do 
     # derive a new log per day (append or create)
@@ -28,6 +29,7 @@ do
 	fi 
 	
     # start web-app 
+    echo "Starting web app"
     (python3 web-app.py >> $log_file 2>&1 &)
     sleep 5 
     pid=`ps aux | grep "web-app" | grep "python3" | awk '{print $2}'`

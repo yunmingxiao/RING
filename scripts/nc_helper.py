@@ -299,7 +299,6 @@ class TrafficControl():
 
 class DVPN():
     def __init__(self, name, configs, path, netlogger, netstat):
-        print('DVPN.init')
         self.name = name
         self.net_interface = 'net-' + name
         self.eth_address = configs['eth-address']
@@ -343,6 +342,7 @@ class DVPN():
         self.last_netlog_time = 0
         self.netstat = netstat
         self.update_used()
+        print("Finished DVPN.init")
 
     def set_policy(self, policy_default, policy_custom):
         self.policy_default = policy_default
