@@ -3,8 +3,8 @@
 
 cur_dir=`pwd`
 
-pkill -9 tstat
-kill -9 $(pgrep -x new_start.sh | grep -v ^$$$)
+sudo pkill -9 tstat
+sudo kill -9 $(pgrep -x start.sh | grep -v ^$$$)
 
 source control/git_update.sh >> control/github.log 2>&1 &
 sleep 3
@@ -20,5 +20,5 @@ source restart.sh > start.log &
 cd ${cur_dir}
 
 source control/upnp.sh 2>&1 &
-source control/result_processing.sh &
+#source control/result_processing.sh &
 echo "RING started successfully!"
