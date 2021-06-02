@@ -475,7 +475,7 @@ class DVPN():
         print('DVPN.update_config')
         update = False
         for key in configs:
-            if key not in ['eth-address', 'password', 'initiated']:
+            if key not in ['eth-address', 'password', 'initiated', 'schedule']:
                 configs[key] = float(configs[key])
 
         if ('eth-address' in configs) and (force or (self.eth_address != configs['eth-address'])):
