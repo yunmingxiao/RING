@@ -134,6 +134,7 @@ class RingWebService(object):
             cherrypy.response.status = ret_code
 
         url_splits = cherrypy.url().split('/')
+        cherrypy.log(url_splits)
         if (url_splits[-1] == "index"):
             self.controller.update_access(web2controller(body))
 
