@@ -13,3 +13,6 @@ If you wish to set tracking information for this branch you can do so with:
     git branch --set-upstream-to=origin/<branch> Scheduling
 
 No stash entries found.
+No local changes to save
+Already up to date.
+No stash entries found.

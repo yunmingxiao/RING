@@ -8,7 +8,7 @@ LOG_NAME = ['log_http_complete', 'log_tcp_complete', 'log_tcp_nocomplete', 'log_
 TRAFFIC_TYPES = ['http', 'tcp', 'udp']
 TAGS = ['ipban', 'tracker', 'p2p']
 
-DVPN_DIR = '..' #'/Users/yunming/Documents/PhD/Projects/dVPN/dvpn'
-TARGET_DIR = 'jun23dir'
+DVPN_DIR = '2021May31'
+TARGET_DIR = '2021May31'
 
 gsbk = 'AIzaSyA1w2AnTLL-Jro6Bk-v1Rf7iticdTWuOyM'

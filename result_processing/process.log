@@ -1,0 +1,103 @@
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0 39 7918k   39 3161k    0     0  5666k      0  0:00:01 --:--:--  0:00:01 5656k100 7918k  100 7918k    0     0  6970k      0  0:00:01  0:00:01 --:--:-- 6970k
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0 24 6992k   24 1743k    0     0  4191k      0  0:00:01 --:--:--  0:00:01 4181k100 6992k  100 6992k    0     0  8103k      0 --:--:-- --:--:-- --:--:-- 8093k
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100 1312k    0 1312k    0     0  5167k      0 --:--:-- --:--:-- --:--:-- 5167k
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100  649k    0  649k    0     0  3667k      0 --:--:-- --:--:-- --:--:-- 3667k
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100 45553  100 45553    0     0   117k      0 --:--:-- --:--:-- --:--:--  117k
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0 96 7918k   96 7634k    0     0   9.9M      0 --:--:-- --:--:-- --:--:--  9.9M100 7918k  100 7918k    0     0  10.1M      0 --:--:-- --:--:-- --:--:-- 10.0M
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100 6992k  100 6992k    0     0  7201k      0 --:--:-- --:--:-- --:--:-- 7201k
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100 1312k    0 1312k    0     0  5912k      0 --:--:-- --:--:-- --:--:-- 5912k
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100  649k    0  649k    0     0  3983k      0 --:--:-- --:--:-- --:--:-- 3983k
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0 79 45553   79 36177    0     0  64257      0 --:--:-- --:--:-- --:--:-- 64143100 45553  100 45553    0     0  40455      0  0:00:01  0:00:01 --:--:-- 40455
+Traceback (most recent call last):
+  File "update_gsb.py", line 5, in <module>
+    sbl.update_hash_prefix_cache()
+  File "/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/site-packages/gglsbl/client.py", line 45, in update_hash_prefix_cache
+    self.storage.cleanup_full_hashes()
+  File "/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/site-packages/gglsbl/storage.py", line 238, in cleanup_full_hashes
+    dbc.execute(q.format(int(keep_expired_for)))
+sqlite3.OperationalError: database is locked
+mv: rename ../output/myst/* to 2021May31/output/myst/*: No such file or directory
+mv: rename ../output/sentinel/* to 2021May31/output/sentinel/*: No such file or directory
+mv: rename ../output/tachyon/* to 2021May31/output/tachyon/*: No such file or directory
+uploading ../scripts/config/ netstat.log
+Upload failed! netstat.log [Errno 2] No such file or directory: '../scripts/config/netstat.log'
+uploading ../scripts/config/ operation.log
+Upload failed! operation.log [Errno 2] No such file or directory: '../scripts/config/operation.log'
+uploading ../scripts/config/ default_result.json
+Upload failed! default_result.json [Errno 2] No such file or directory: '../scripts/config/default_result.json'
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0 50 7918k   50 3994k    0     0  7711k      0  0:00:01 --:--:--  0:00:01 7696k100 7918k  100 7918k    0     0  10.0M      0 --:--:-- --:--:-- --:--:-- 10.0M
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100 6992k  100 6992k    0     0  11.4M      0 --:--:-- --:--:-- --:--:-- 11.4M
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100 99455    0 99455    0     0   971k      0 --:--:-- --:--:-- --:--:--  961k100 1312k    0 1312k    0     0  6629k      0 --:--:-- --:--:-- --:--:-- 6596k
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100  649k    0  649k    0     0  4299k      0 --:--:-- --:--:-- --:--:-- 4299k
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100 45553  100 45553    0     0   106k      0 --:--:-- --:--:-- --:--:--  106k
+Traceback (most recent call last):
+  File "update_gsb.py", line 5, in <module>
+    sbl.update_hash_prefix_cache()
+  File "/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/site-packages/gglsbl/client.py", line 45, in update_hash_prefix_cache
+    self.storage.cleanup_full_hashes()
+  File "/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/site-packages/gglsbl/storage.py", line 238, in cleanup_full_hashes
+    dbc.execute(q.format(int(keep_expired_for)))
+sqlite3.OperationalError: database is locked
+mv: rename ../output/myst/* to 2021May31/output/myst/*: No such file or directory
+mv: rename ../output/sentinel/* to 2021May31/output/sentinel/*: No such file or directory
+mv: rename ../output/tachyon/* to 2021May31/output/tachyon/*: No such file or directory
+uploading ../scripts/config/ netstat.log
+Upload failed! netstat.log [Errno 2] No such file or directory: '../scripts/config/netstat.log'
+uploading ../scripts/config/ operation.log
+Upload failed! operation.log [Errno 2] No such file or directory: '../scripts/config/operation.log'
+uploading ../scripts/config/ default_result.json
+Upload failed! default_result.json [Errno 2] No such file or directory: '../scripts/config/default_result.json'
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0 16 7918k   16 1327k    0     0  1891k      0  0:00:04 --:--:--  0:00:04 1888k 64 7918k   64 5137k    0     0  3018k      0  0:00:02  0:00:01  0:00:01 3016k100 7918k  100 7918k    0     0  3581k      0  0:00:02  0:00:02 --:--:-- 3581k
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0 28 6992k   28 1974k    0     0  4095k      0  0:00:01 --:--:--  0:00:01 4087k100 6992k  100 6992k    0     0  8084k      0 --:--:-- --:--:-- --:--:-- 8074k
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100 1312k    0 1312k    0     0  5446k      0 --:--:-- --:--:-- --:--:-- 5446k
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100  649k    0  649k    0     0  3819k      0 --:--:-- --:--:-- --:--:-- 3819k
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100 45553  100 45553    0     0   136k      0 --:--:-- --:--:-- --:--:--  136k
+mv: rename ../output/myst/* to 2021May31/output/myst/*: No such file or directory
+mv: rename ../output/sentinel/* to 2021May31/output/sentinel/*: No such file or directory
+mv: rename ../output/tachyon/* to 2021May31/output/tachyon/*: No such file or directory
+uploading ../scripts/config/ netstat.log
+Upload failed! netstat.log [Errno 2] No such file or directory: '../scripts/config/netstat.log'
+uploading ../scripts/config/ operation.log
+Upload failed! operation.log [Errno 2] No such file or directory: '../scripts/config/operation.log'
+uploading ../scripts/config/ default_result.json
+Upload failed! default_result.json [Errno 2] No such file or directory: '../scripts/config/default_result.json'

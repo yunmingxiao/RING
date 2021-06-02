@@ -20,6 +20,8 @@ import importlib
 import policy.default as policy_default_
 policy_custom_ = policy_default_
 
+
+
 def new_custom_policy():
     policy_file_default = os.path.join(os.getcwd()+'/..', "policy", "default.py")
     policy_file_custom = os.path.join(os.getcwd()+'/..', "policy", "custom.py")
@@ -303,13 +305,13 @@ class DVPN():
         self.eth_address = configs['eth-address']
         self.data_plan = configs['data-plan']
         self.bandwidth_limit = configs['bandwidth-limit']
-        # self.auto_bandwidth = configs['auto-bandwidth']
-        # if 'custom-bandwidth-policy' in configs:
-        #     self.custom_bandwidth_policy = configs['custom-bandwidth-policy']
-        # else:
-        #     self.custom_bandwidth_policy = False
         self.price_setting = configs['price-setting']
         self.auto_price = configs['auto-price']
+        self.auto_bandwidth = configs['auto-bandwidth']
+        if 'custom-bandwidth-policy' in configs:
+            self.custom_bandwidth_policy = configs['custom-bandwidth-policy']
+        else:
+            self.custom_bandwidth_policy = False
         if 'custom-price-policy' in configs:
             self.custom_price_policy = configs['custom-price-policy']
         else:
@@ -458,8 +460,8 @@ class DVPN():
         configs['eth-address'] = self.eth_address
         configs['data-plan'] = self.data_plan
         configs['bandwidth-limit'] = self.bandwidth_limit
-        # configs['auto-bandwidth'] = self.auto_bandwidth
-        # configs['custom-bandwidth-policy'] = self.custom_bandwidth_policy
+        configs['auto-bandwidth'] = self.auto_bandwidth
+        configs['custom-bandwidth-policy'] = self.custom_bandwidth_policy
         configs['price-setting'] = self.price_setting
         configs['auto-price'] = self.auto_price
         configs['custom-price-policy'] = self.custom_price_policy
@@ -487,13 +489,13 @@ class DVPN():
             self.bandwidth_limit = configs['bandwidth-limit']
             self.update_bandwidth_limit()
             update = True
-        # if ('custom-bandwidth-policy' in configs) and (force or (self.custom_bandwidth_policy != configs['custom-bandwidth-policy'])):
-        #     self.custom_bandwidth_policy = configs['custom-bandwidth-policy']
-        #     update = True
-        # if ('auto-bandwidth' in configs) and (force or (self.auto_bandwidth != configs['auto-bandwidth'])):
-        #     self.auto_bandwidth = configs['auto-bandwidth']
-        #     self.update_auto_control()
-        #     update = True
+        if ('custom-bandwidth-policy' in configs) and (force or (self.custom_bandwidth_policy != configs['custom-bandwidth-policy'])):
+            self.custom_bandwidth_policy = configs['custom-bandwidth-policy']
+            update = True
+        if ('auto-bandwidth' in configs) and (force or (self.auto_bandwidth != configs['auto-bandwidth'])):
+            self.auto_bandwidth = configs['auto-bandwidth']
+            self.update_auto_control()
+            update = True
         if ('price-setting' in configs) and (force or (self.price_setting != configs['price-setting'])):
             self.update_price_setting(configs['price-setting'])
             self.price_setting = configs['price-setting']
@@ -532,8 +534,15 @@ class DVPN():
 
     def update_bandwidth_limit(self):
         print('DVPN.update_bandwidth_limit')
+        if (self.auto_bandwidth and self.custom_bandwidth_policy):
+            return
         self.tc.add_rule(self.net_interface, direction='outgoing', rate_limit=self.bandwidth_limit*1000000/2.0)
         self.tc.add_rule(self.net_interface, direction='incoming', rate_limit=self.bandwidth_limit*1000000/2.0)
+    
+    def auto_update_bandwidth_limit(self, limit):
+        self.tc.add_rule(self.net_interface, direction='outgoing', rate_limit=limit*1000000/2.0)
+        self.tc.add_rule(self.net_interface, direction='incoming', rate_limit=limit*1000000/2.0)
+
 
     def update_price_setting(self, price_setting, price2=None):
         print('DVPN.update_price_setting')
@@ -555,7 +564,10 @@ class DVPN():
 
     def update_auto_control(self):
         print('DVPN.update_auto_control')
-        # if self.auto_bandwidth or self.auto_price:
+        # if self.auto_price:
+        if self.auto_bandwidth and self.custom_bandwidth_policy:
+            now = datetime.datetime.now().hour
+            self.auto_update_bandwidth_limit(self.custom_bandwidth_policy[now])
         if self.auto_price:
             todayDate = datetime.date.today()
             month_start = time.mktime(todayDate.replace(day=1).timetuple())
@@ -764,6 +776,7 @@ class Controller():
         with open(os.path.join(self.op_logger), "a+") as fp:
             fp.write(str(time.time()) + " " + str(op) + "\n")
 
+    # Update controller configs
     def log_netstat(self, w, t):
         print('Controller.log_netstat', w, t)
         net_stats = self.netstat.get_configs()
@@ -817,7 +830,7 @@ class Controller():
         return self.netstat.get_history()
 
     # dvpn page
-    # # config
+    # # config HERE
     def update_vpn(self, vpn, configs, force=False, log=True):
         update = self.dvpns[vpn].update_config(configs, force)
         if 'custom-price-policy' in configs:
@@ -826,6 +839,12 @@ class Controller():
         if 'auto-price' in configs:
             for k in self.dvpns:
                 self.dvpns[k].update_config({'auto-price': configs['auto-price']})
+        if 'custom-bandwidth-policy' in configs:
+            for k in self.dvpns:
+                self.dvpns[k].update_config({'custom-bandwidth-policy': configs['custom-bandwidth-policy']})
+        if 'auto-bandwidth' in configs:
+            for k in self.dvpns:
+                self.dvpns[k].update_config({'auto-bandwidth': configs['auto-bandwidth']})
         if update and log:
             self.save()
             self.log_operation('Controller.update_vpn: ' + vpn + ' ' + str(json.dumps(self.dvpns[vpn].generate_config())))
@@ -916,15 +935,6 @@ class Controller():
             policy_exceptions.append(e)
         return self.get_policy_errors()
 
-    def update_schedule(self, schedule):
-        self.log_operation('Controller.update_schedule: ' + ">>>>" 
-                            + ",".join(schedule) + "<<<<")
-        schedule_file = os.path.join(self.path, "schedule", "custom.py")
-        with open(schedule_file, 'w') as fp:
-            fp.write(schedule)
-
-        return True
-
     def get_schedule(self):
         schedule_file = os.path.join(self.path, "schedule", "custom.py")
         schedule = ''
@@ -973,10 +983,10 @@ class Controller():
                 "eth-address": "0xFb6be8eAb6899C6Ec2bb859cae96094867Dbc733", 
                 "data-plan": 200,
                 "bandwidth-limit": 5,
-                # "auto-bandwidth": False,
+                "auto-bandwidth": False,
                 "price-setting": 0.1,
                 "auto-price": False,
-                # "custom-bandwidth-policy": False,
+                "custom-bandwidth-policy": False,
                 "custom-price-policy": False,
                 "password": "mystberry",
                 "initiated": False,
@@ -986,10 +996,10 @@ class Controller():
                 "eth-address": "0xFb6be8eAb6899C6Ec2bb859cae96094867Dbc733", 
                 "data-plan": 200,
                 "bandwidth-limit": 5,
-                # "auto-bandwidth": False,
+                "auto-bandwidth": False,
                 "price-setting": 50.0,
                 "auto-price": False,
-                # "custom-bandwidth-policy": False,
+                "custom-bandwidth-policy": False,
                 "custom-price-policy": False,
                 "password": "",
                 "initiated": False,
@@ -999,10 +1009,10 @@ class Controller():
                 "eth-address": "0xFb6be8eAb6899C6Ec2bb859cae96094867Dbc733", 
                 "data-plan": 200,
                 "bandwidth-limit": 5,
-                # "auto-bandwidth": False,
+                "auto-bandwidth": False,
                 "price-setting": 0.5,
                 "auto-price": False,
-                # "custom-bandwidth-policy": False,
+                "custom-bandwidth-policy": False,
                 "custom-price-policy": False,
                 "password": "",
                 "initiated": False,

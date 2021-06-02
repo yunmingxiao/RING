@@ -130,11 +130,11 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
       schedule.push(element.value)
     }
     submission = JSON.stringify({
-      "schedule": schedule
+      "custom-bandwidth-policy": schedule
     })
     $.ajax({
         type: "POST",
-        url: document.URL+'-custom-schedule/',
+        url: document.URL+'-/custom-schedule/',
         contentType: "application/json",
         dataType: "json",
         data: submission,
@@ -221,10 +221,10 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
        "eth-address": document.getElementById("eth-address").value,
        "data-plan": document.getElementById("data-plan").value,
        "bandwidth-limit": document.getElementById("bandwidth-limit").value,
-       //"auto-bandwidth": document.getElementById("auto-bandwidth").checked,
+       "auto-bandwidth": document.getElementById("auto-bandwidth").checked,
        "price-setting": document.getElementById("price-setting").value,
        "auto-price": document.getElementById("auto-price").checked,
-       //"custom-bandwidth-policy": document.getElementById("custom-bandwidth-policy").checked,
+       "custom-bandwidth-policy": document.getElementById("custom-bandwidth-policy").checked,
        "custom-price-policy": document.getElementById("custom-price-policy").checked,
        "password": document.getElementById("password").value,
     });
