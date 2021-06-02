@@ -307,6 +307,7 @@ class DVPN():
         self.price_setting = configs['price-setting']
         self.auto_price = configs['auto-price']
         self.auto_bandwidth = configs['auto-bandwidth']
+        self.schedule = [0]*24
         if 'custom-bandwidth-policy' in configs:
             self.custom_bandwidth_policy = configs['custom-bandwidth-policy']
         else:
@@ -492,6 +493,9 @@ class DVPN():
         if ('custom-bandwidth-policy' in configs) and (force or (self.custom_bandwidth_policy != configs['custom-bandwidth-policy'])):
             self.custom_bandwidth_policy = configs['custom-bandwidth-policy']
             update = True
+        if ('schedule' in configs) and (force or (self.schedule != configs['schedule'])):
+            self.schedule = configs['schedule']
+            update = True
         if ('auto-bandwidth' in configs) and (force or (self.auto_bandwidth != configs['auto-bandwidth'])):
             self.auto_bandwidth = configs['auto-bandwidth']
             self.update_auto_control()
@@ -568,8 +572,8 @@ class DVPN():
         if self.auto_bandwidth and self.custom_bandwidth_policy:
             now = datetime.datetime.now().hour
             print(now)
-            print(self.custom_bandwidth_policy)
-            self.auto_update_bandwidth_limit(self.custom_bandwidth_policy[now])
+            print(self.schedule)
+            self.auto_update_bandwidth_limit(self.schedule[now])
         if self.auto_price:
             todayDate = datetime.date.today()
             month_start = time.mktime(todayDate.replace(day=1).timetuple())
@@ -847,6 +851,9 @@ class Controller():
         if 'auto-bandwidth' in configs:
             for k in self.dvpns:
                 self.dvpns[k].update_config({'auto-bandwidth': configs['auto-bandwidth']})
+        if 'schedule' in configs:
+            for k in self.dvpns:
+                self.dvpns[k].update_config({'schedule': configs['schedule']})
         if update and log:
             self.save()
             self.log_operation('Controller.update_vpn: ' + vpn + ' ' + str(json.dumps(self.dvpns[vpn].generate_config())))
@@ -990,6 +997,7 @@ class Controller():
                 "auto-price": False,
                 "custom-bandwidth-policy": False,
                 "custom-price-policy": False,
+                "schedule": [0]*24,
                 "password": "mystberry",
                 "initiated": False,
                 "exceed-plan": False,
@@ -1001,6 +1009,7 @@ class Controller():
                 "auto-bandwidth": False,
                 "price-setting": 50.0,
                 "auto-price": False,
+                "schedule": [0]*24,
                 "custom-bandwidth-policy": False,
                 "custom-price-policy": False,
                 "password": "",
@@ -1014,6 +1023,7 @@ class Controller():
                 "auto-bandwidth": False,
                 "price-setting": 0.5,
                 "auto-price": False,
+                "schedule": [0]*24,
                 "custom-bandwidth-policy": False,
                 "custom-price-policy": False,
                 "password": "",
