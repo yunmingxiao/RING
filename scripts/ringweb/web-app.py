@@ -23,6 +23,7 @@ def read_json(req):
 @cherrypy.expose
 class RingWebService(object):
     def __init__(self):
+        print("WEB SERVICE INITIALIZED")
         self.dvpns = ['mysterium', 'sentinel', 'tachyon']
         self.controller = nc_helper.Controller(os.getcwd() + '/..')
         self.agree = self.get_agreement()
