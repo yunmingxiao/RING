@@ -149,7 +149,7 @@ class RingWebService(object):
         elif ('-custom-schedule' in url_splits[-1]):
             cherrypy.log(url_splits[-1].split('-')[0])
             cherrypy.log(body)
-            self.controller.update_vpn(url_splits.split('-')[0], body)
+            self.controller.update_vpn(url_splits[-1].split('-')[0], body)
             cherrpy.log("custom_schedule update endpoint hit")
         
         else:
