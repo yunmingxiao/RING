@@ -23,7 +23,6 @@ def read_json(req):
 @cherrypy.expose
 class RingWebService(object):
     def __init__(self):
-        print("WEB SERVICE INITIALIZED")
         self.dvpns = ['mysterium', 'sentinel', 'tachyon']
         self.controller = nc_helper.Controller(os.getcwd() + '/..')
         self.agree = self.get_agreement()
@@ -147,7 +146,7 @@ class RingWebService(object):
         elif ('-custom-code' in url_splits[-1]):
             self.controller.update_policy(body['code'])
         elif ('-custom-schedule' in url_splits[-1]) and (url_splits[-2] in self.dvpns):
-            self.controller.update_vpn(url_splits[-1], body)
+            self.controller.update_vpn(url_splits[-2], body)
             print("custom_schedule update endpoint hit")
         
         else:
