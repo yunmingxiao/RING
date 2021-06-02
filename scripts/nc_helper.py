@@ -567,6 +567,8 @@ class DVPN():
         # if self.auto_price:
         if self.auto_bandwidth and self.custom_bandwidth_policy:
             now = datetime.datetime.now().hour
+            print(now)
+            print(self.custom_bandwidth_policy)
             self.auto_update_bandwidth_limit(self.custom_bandwidth_policy[now])
         if self.auto_price:
             todayDate = datetime.date.today()
