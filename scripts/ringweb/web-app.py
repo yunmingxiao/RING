@@ -145,7 +145,9 @@ class RingWebService(object):
 
         elif ('-custom-code' in url_splits[-1]):
             self.controller.update_policy(body['code'])
-        elif ('-custom-schedule' in url_splits[-1]) and (url_splits[-2] in self.dvpns):
+        elif ('-custom-schedule' in url_splits[-1]):
+            print (url_splits[-2])
+            print(body)
             self.controller.update_vpn(url_splits[-2], body)
             print("custom_schedule update endpoint hit")
         
