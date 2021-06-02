@@ -134,7 +134,7 @@ class RingWebService(object):
             cherrypy.response.status = ret_code
 
         url_splits = cherrypy.url().split('/')
-        cherrypy.log(url_splits)
+        cherrypy.log(url_splits[-1])
         if (url_splits[-1] == "index"):
             self.controller.update_access(web2controller(body))
 
@@ -147,13 +147,11 @@ class RingWebService(object):
         elif ('-custom-code' in url_splits[-1]):
             self.controller.update_policy(body['code'])
         elif ('-custom-schedule' in url_splits[-1]):
-            cherrypy.log(url_splits[-1].split('-')[0])
             cherrypy.log(body)
             self.controller.update_vpn(url_splits[-1].split('-')[0], body)
             cherrpy.log("custom_schedule update endpoint hit")
         
         else:
-            cherrypy.log(url_splits)
             cherrypy.response.status = 404
             return "ERROR"
 

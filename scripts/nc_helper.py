@@ -571,9 +571,7 @@ class DVPN():
         # if self.auto_price:
         if self.auto_bandwidth and self.custom_bandwidth_policy:
             now = datetime.datetime.now().hour
-            print(now)
-            print(self.schedule)
-            self.auto_update_bandwidth_limit(self.schedule[now])
+            self.auto_update_bandwidth_limit(int(self.schedule[now]))
         if self.auto_price:
             todayDate = datetime.date.today()
             month_start = time.mktime(todayDate.replace(day=1).timetuple())
